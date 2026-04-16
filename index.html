@@ -428,8 +428,10 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
 <div class="modal-bg" id="exportModal">
   <div class="modal">
     <h3>Rapor Oluştur</h3>
+    <p style="color:var(--ink-soft); font-size:13px; margin: 0 0 12px;">PDF raporlar eksik maddelerin fotoğraflarını içerir. HTML rapor tüm fotoğrafları içerir.</p>
     <div class="modal-actions">
-      <button class="btn-primary" onclick="exportPDF()">📄 PDF Rapor</button>
+      <button class="btn-primary" onclick="exportPDF()">📄 PDF Rapor (eksik fotoğrafları dahil)</button>
+      <button class="btn-primary" style="background:var(--ok);" onclick="exportHTMLReport()">🖼️ HTML Rapor (tüm fotoğraflarla)</button>
       <button class="btn-primary" style="background:var(--primary-soft);" onclick="exportWord()">📝 Word (.docx)</button>
       <button class="btn-primary accent" onclick="sharePDF()">📱 PDF + Paylaş (WhatsApp/E-posta)</button>
       <button class="btn-secondary" onclick="closeExport()">Kapat</button>
@@ -708,7 +710,174 @@ const SABLONLAR = [
   { id: "otel_4", ad: "4 Yıldızlı Otel", aciklama: "Madde 19/5", ikon: "⭐", hazir: false, bilgiAlanlari: [], bolumler: [] },
   { id: "otel_3", ad: "3 Yıldızlı Otel", aciklama: "Madde 19/4", ikon: "⭐", hazir: false, bilgiAlanlari: [], bolumler: [] },
   { id: "otel_2", ad: "2 Yıldızlı Otel", aciklama: "Madde 19/3", ikon: "⭐", hazir: false, bilgiAlanlari: [], bolumler: [] },
-  { id: "otel_1", ad: "1 Yıldızlı Otel", aciklama: "Madde 19/2", ikon: "⭐", hazir: false, bilgiAlanlari: [], bolumler: [] },
+  { id: "otel_1", ad: "1 Yıldızlı Otel", aciklama: "Madde 19/2 — En az 5 odalı, resepsiyon ve oturma alanı bulunan otel", ikon: "⭐", hazir: true,
+    bilgiAlanlari: [
+      { key: "tesisAdi", label: "Tesisin Adı", required: true },
+      { key: "adres", label: "Adresi" },
+      { key: "telefon", label: "Telefon / Faks" },
+      { key: "belgeNo", label: "Belge Tarih ve No" },
+      { key: "belgeSahibi", label: "Belge Sahibi / Girişimci" },
+      { key: "denetimNedeni", label: "Denetleme Nedeni" },
+      { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
+      { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
+      { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
+      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+    ],
+    bolumler: [
+      {
+        id: "o1_genel",
+        ad: "Bölüm 1 — Genel Asgari Nitelikler",
+        altbaslik: "Tüm turizm tesislerine ortak (Madde 13-17)",
+        gruplar: [
+          {
+            id: "o1g_yerlesme", ad: "Yerleşme ve Yapı (M.13)", tip: "normal",
+            maddeler: [
+              { id: "o1g13_1", t: "Mahaller kullanım amacına uygun ölçülerde mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "o1g13_2", t: "Tefriş ve donanım elemanları kaliteli ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "o1g13_3", t: "Dış cephe, iç duvar, zemin, tavan, çatı kaplamaları bakımlı ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "o1g13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
+              { id: "o1g13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
+              { id: "o1g13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
+              { id: "o1g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+                kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
+            ]
+          },
+          {
+            id: "o1g_mahaller", ad: "Mahallerin Düzenlenmesi (M.14)", tip: "normal",
+            maddeler: [
+              { id: "o1g14_1", t: "Isıtma merkezi sistem ile sağlanıyor mu?", r: "M.14/3", cevapTip: "evet_hayir",
+                kosulNot: "1 yıldızlı otellerde klima ile ısıtma zorunlu değil, merkezi ısıtma yeterli" },
+              { id: "o1g14_2", t: "Tüm mekanlarda yeterli doğal veya mekanik havalandırma var mı?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "o1g14_3", t: "Devamlı sıcak ve soğuk su mevcut mu?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "o1g14_4", t: "Jeneratör mevcut mu? (kapasite 100 kişi/yatak üzerindeyse zorunlu)", r: "M.14/4", cevapTip: "var_yok_na",
+                kosulNot: "Kapasite 100 altındaysa Uygulanmaz seçin" }
+            ]
+          },
+          {
+            id: "o1g_personel", ad: "Personel Mahalleri (M.15)", tip: "normal",
+            maddeler: [
+              { id: "o1g15_1", t: "20 oda üzeri: Personel için bay/bayan ayrı soyunma yeri, dolap, duş ve tuvalet var mı?", r: "M.15/2", cevapTip: "evet_hayir",
+                kosulNot: "20 oda altındaysa aşağıdaki maddeye bakın" },
+              { id: "o1g15_2", t: "20 oda altı: Personel için tuvalet ve lavabo var mı? (kadın-erkek ortak olabilir)", r: "M.15/2", cevapTip: "evet_hayir",
+                kosulNot: "20 oda ve üzerindeyse yukarıdaki maddeye bakın" },
+              { id: "o1g15_3", t: "60 oda üzeri: Personelin ortak oturma, dinlenme ve yemek mahalli var mı?", r: "M.15/2", cevapTip: "var_yok_na",
+                kosulNot: "60 oda altındaysa Uygulanmaz seçin" },
+              { id: "o1g15_4", t: "Personel görev mahallerine uygun, özel ve temiz kıyafetli mi?", r: "M.15/4", cevapTip: "evet_hayir" },
+              { id: "o1g15_5", t: "İlk yardım konusunda sertifikalı personel mevcut mu?", r: "M.15/5", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "o1g_saglik", ad: "Sağlık, Temizlik, Güvenlik, Çevre (M.17)", tip: "normal",
+            maddeler: [
+              { id: "o1g17_1", t: "Hijyen ve sağlık kurallarına uyuluyor mu?", r: "M.17/1", cevapTip: "evet_hayir" },
+              { id: "o1g17_2", t: "İlkyardım malzemeleri bulunduruluyor mu?", r: "M.17/2", cevapTip: "evet_hayir" },
+              { id: "o1g17_3", t: "Düzenli temizlik ve bakım sağlanıyor mu?", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "o1g17_4", t: "Periyodik haşere mücadelesi yapılıyor mu? (son fatura/sözleşme)", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "o1g17_5", t: "Geri dönüşüm kutuları mevcut mu?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "o1g17_6", t: "Çöplerin muhafazası uygun mu?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "o1g17_7", t: "Güvenlik önlemleri (elektronik ve fiziki) alınmış mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "o1g17_8", t: "Tesisat, elektrik ve mekanik donanım standartlara uygun ve bakımlı mı?", r: "M.17/5", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "o1g_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
+            maddeler: [
+              { id: "o1g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "o1g16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
+              { id: "o1g16_3", t: "Tesis isminde kapasitede yer almayan ünitelere ilişkin terim kullanılıyor mu?", r: "M.16/3", cevapTip: "evet_hayir",
+                kosulNot: "Hayır olması gerekir — terim kullanılmamalıdır" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "o1_konaklama",
+        ad: "Bölüm 2 — Konaklama Tesisi Asgari Nitelikleri",
+        altbaslik: "Madde 18 — Konaklama tesislerinin asgari nitelikleri",
+        gruplar: [
+          {
+            id: "o1k_genel", ad: "Genel Konaklama (M.18, M.19/2)", tip: "normal",
+            maddeler: [
+              { id: "o1k_oda", t: "Oda sayısı kaç?", r: "M.19/2-a", cevapTip: "sayi", unit: "adet",
+                kural: { tip: "sayi_min", min: 5, mesaj: "1 yıldızlı otellerde en az 5 oda zorunludur (M.19/2-a)" } }
+            ]
+          },
+          {
+            id: "o1k_yatak", ad: "Yatak Odaları (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "o1k18_isik", t: "Yatak odaları doğal ışık alacak şekilde düzenlenmiş mi?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_banyo", t: "Yatak odaları banyolu mu?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_yatak", t: "Odalarda yatak, yastık, yastık kılıfı, nevresim, pike/yorgan var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_perde", t: "Odalarda tül perde ve kalın perde (veya benzeri düzenleme) var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_aydinlatma", t: "Odalarda genel aydınlatma, gece lambası ve priz var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_sehpa", t: "Yatak başucu sehpası veya benzeri düzenleme var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_dolap", t: "Elbise dolabı veya benzeri düzenleme var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_cop", t: "Odalarda çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_zemin", t: "Nitelikli zemin kaplaması var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_kilit", t: "Oda kapılarında elektronik kilit veya ilave kilit sistemi var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_dedektor", t: "Odalarda duman dedektörü var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_klima", t: "Odalarda iklim koşullarına göre klima var mı?", r: "M.18/1-a/1", cevapTip: "var_yok_na",
+                kosulNot: "1 yıldızlı otellerde klima zorunlu değildir — Uygulanmaz seçebilirsiniz" },
+              { id: "o1k18_mutfak_yok", t: "Yatak odalarında mutfak veya mutfak nişi düzenlemesi yapılmamış mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir",
+                kosulNot: "Evet olması gerekir — yatak odalarında mutfak nişi düzenlenmez" }
+            ]
+          },
+          {
+            id: "o1k_banyo", ad: "Banyo (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "o1k18_b_su", t: "Banyolarda suyun yayılımını engelleyici önlemler alınmış mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_b_vitrifiye", t: "Banyolarda vitrifiye, armatür, batarya, duş donanımı var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_b_ayna", t: "Banyolarda ayna var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_b_priz", t: "Banyolarda priz var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_b_cop", t: "Banyolarda çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_b_sabun", t: "Banyolarda sabun ve şampuan var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "o1k18_b_havlu", t: "Banyolarda el, banyo ve ayak havlusu (3 havlu) var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "o1k_diger", ad: "Diğer Konaklama Nitelikleri (M.18)", tip: "normal",
+            maddeler: [
+              { id: "o1k_asansor", t: "Müşteri asansörü gerekli mi ve var mı? (3 kattan fazla inilip çıkılıyorsa zorunlu)", r: "M.18/1-c", cevapTip: "var_yok_na",
+                kosulNot: "3 kat veya altındaysa Uygulanmaz seçin. Korunması gerekli taşınmazlarda zorunlu değildir." },
+              { id: "o1k_asansor_alarm", t: "Asansör varsa: alarm tertibatı ve havalandırma düzeneği var mı?", r: "M.18/1-c", cevapTip: "var_yok_na",
+                kosulNot: "Asansör yoksa Uygulanmaz seçin" },
+              { id: "o1k_yangin", t: "Yangın merdiveni düzenlemesi var mı?", r: "Genel", cevapTip: "var_yok_na" },
+              { id: "o1k_taban", t: "Yatak odaları mevcut arazi seviyesinin altında kalmıyor mu?", r: "M.18/1-a/5", cevapTip: "evet_hayir",
+                kosulNot: "Evet olması gerekir — bodrum katta oda olamaz" },
+              { id: "o1k_engelli", t: "Engelli düzenlemesi yapılmış mı? (80 oda üzeri tesislerde zorunlu)", r: "M.18/1-b", cevapTip: "var_yok_na",
+                kosulNot: "80 oda altındaysa Uygulanmaz seçin" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "o1_ozel",
+        ad: "Bölüm 3 — 1 Yıldızlı Otel Özel Nitelikleri",
+        altbaslik: "Madde 19/2 — 1 yıldıza özel hükümler",
+        gruplar: [
+          {
+            id: "o1o_ozel", ad: "1 Yıldız Özel Şartlar (M.19/2)", tip: "normal",
+            maddeler: [
+              { id: "o1o_resepsiyon", t: "Resepsiyon ve bekleme bölümünden oluşan lobi var mı?", r: "M.19/2-b", cevapTip: "evet_hayir" },
+              { id: "o1o_oturma", t: "Oturma alanı var mı?", r: "M.19/2-c", cevapTip: "evet_hayir" },
+              { id: "o1o_icecek", t: "Oturma alanında sıcak ve soğuk içecek hizmeti veriliyor mu?", r: "M.19/2-c", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "o1o_istisna", ad: "1 Yıldız İstisnaları — Bilgi Amaçlı", tip: "normal",
+            maddeler: [
+              { id: "o1o_not1", t: "NOT: 1 yıldızlı otellerde erkek-kadın için ayrı genel tuvalet zorunlu değildir (M.14/2 istisnası)", r: "M.14/2", cevapTip: "metin",
+                kosulNot: "Bilgi amaçlı — zorunlu değildir, varsa not edin" },
+              { id: "o1o_not2", t: "NOT: 1 yıldızlı otellerde odalarda klima zorunlu değildir", r: "M.18/1-a/1", cevapTip: "metin",
+                kosulNot: "Bilgi amaçlı — zorunlu değildir" },
+              { id: "o1o_not3", t: "NOT: 1 yıldızlı otellerde odalarda telefon zorunlu değildir", r: "M.18/1-a/1", cevapTip: "metin",
+                kosulNot: "Bilgi amaçlı — zorunlu değildir" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   { id: "tatil_koyu", ad: "Tatil Köyü", aciklama: "Madde 20", ikon: "🏖️", hazir: false, bilgiAlanlari: [], bolumler: [] },
   { id: "butik_otel", ad: "Butik Otel", aciklama: "Madde 21", ikon: "🏛️", hazir: false, bilgiAlanlari: [], bolumler: [] },
   { id: "ozel_konaklama", ad: "Özel Konaklama Tesisi", aciklama: "Madde 22", ikon: "🏰", hazir: false, bilgiAlanlari: [], bolumler: [] },
@@ -859,7 +1028,171 @@ const SABLONLAR = [
       }
     ]
   },
-  { id: "apart_otel", ad: "Apart Otel", aciklama: "Madde 25", ikon: "🏢", hazir: false, bilgiAlanlari: [], bolumler: [] },
+  { id: "apart_otel", ad: "Apart Otel", aciklama: "Madde 25 — Müşterinin kendi yeme-içme ihtiyacını karşılayabileceği, tüm odaları apart oda şeklinde, en az 10 odalı otel", ikon: "🏢", hazir: true,
+    bilgiAlanlari: [
+      { key: "tesisAdi", label: "Tesisin Adı", required: true },
+      { key: "adres", label: "Adresi" },
+      { key: "telefon", label: "Telefon / Faks" },
+      { key: "belgeNo", label: "Belge Tarih ve No" },
+      { key: "belgeSahibi", label: "Belge Sahibi / Girişimci" },
+      { key: "denetimNedeni", label: "Denetleme Nedeni" },
+      { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
+      { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
+      { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
+      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+    ],
+    bolumler: [
+      {
+        id: "a_genel",
+        ad: "Bölüm 1 — Genel Asgari Nitelikler",
+        altbaslik: "Tüm turizm tesislerine ortak (Madde 13-17)",
+        gruplar: [
+          {
+            id: "ag_yerlesme", ad: "Yerleşme ve Yapı (M.13)", tip: "normal",
+            maddeler: [
+              { id: "ag13_1", t: "Mahaller kullanım amacına uygun ölçülerde mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "ag13_2", t: "Tefriş ve donanım elemanları kaliteli ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "ag13_3", t: "Dış cephe, iç duvar, zemin, tavan, çatı kaplamaları bakımlı ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "ag13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
+              { id: "ag13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
+              { id: "ag13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
+              { id: "ag13_7", t: "Farklı parsellerdeki üniteler arasında hizmet ve işletme birliği ile fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+                kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
+            ]
+          },
+          {
+            id: "ag_mahaller", ad: "Mahallerin Düzenlenmesi (M.14)", tip: "normal",
+            maddeler: [
+              { id: "ag14_1", t: "Isıtma merkezi sistem veya klima ile sağlanıyor mu?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "ag14_2", t: "Tüm mekanlarda yeterli doğal veya mekanik havalandırma var mı?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "ag14_3", t: "Devamlı sıcak ve soğuk su mevcut mu?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "ag14_4", t: "Jeneratör mevcut mu? (kapasite 100 kişi/yatak üzerindeyse zorunlu)", r: "M.14/4", cevapTip: "var_yok_na",
+                kosulNot: "Kapasite 100 altındaysa Uygulanmaz seçin" }
+            ]
+          },
+          {
+            id: "ag_saglik", ad: "Sağlık, Temizlik, Güvenlik, Çevre (M.17)", tip: "normal",
+            maddeler: [
+              { id: "ag17_1", t: "Hijyen ve sağlık kurallarına uyuluyor mu?", r: "M.17/1", cevapTip: "evet_hayir" },
+              { id: "ag17_2", t: "İlkyardım malzemeleri bulunduruluyor mu?", r: "M.17/2", cevapTip: "evet_hayir" },
+              { id: "ag17_3", t: "Düzenli temizlik ve bakım sağlanıyor mu?", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "ag17_4", t: "Periyodik haşere mücadelesi yapılıyor mu? (son fatura/sözleşme)", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "ag17_5", t: "Geri dönüşüm kutuları mevcut mu? (kağıt, cam, metal, plastik)", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "ag17_6", t: "Çöplerin muhafazası uygun mu? (koku, pislik, haşarat yapmayacak şekilde)", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "ag17_7", t: "Güvenlik önlemleri (elektronik ve fiziki) alınmış mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "ag17_8", t: "Tesisat, elektrik ve mekanik donanım standartlara uygun ve bakımlı mı?", r: "M.17/5", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "ag_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
+            maddeler: [
+              { id: "ag16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "ag16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
+              { id: "ag16_3", t: "Tesis isminde kapasitede yer almayan ünitelere ilişkin terim kullanılıyor mu?", r: "M.16/3", cevapTip: "evet_hayir",
+                kosulNot: "Hayır olması gerekir — terim kullanılmamalıdır" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "a_konaklama",
+        ad: "Bölüm 2 — Konaklama Tesisi Asgari Nitelikleri",
+        altbaslik: "Madde 18 — Konaklama tesislerinin asgari nitelikleri",
+        gruplar: [
+          {
+            id: "ak_genel", ad: "Genel Konaklama (M.18, M.25)", tip: "normal",
+            maddeler: [
+              { id: "ak_oda", t: "Oda sayısı kaç?", r: "M.25/1", cevapTip: "sayi", unit: "adet",
+                kural: { tip: "sayi_min", min: 10, mesaj: "Apart otellerde en az 10 oda zorunludur (M.25/1)" } },
+              { id: "ak_otel", t: "Tesis otel olarak mı işletiliyor? (ayrı kat mülkiyeti yok, dönemlik kiralama yok)", r: "M.25/1", cevapTip: "evet_hayir" },
+              { id: "ak_tumoda", t: "Tüm odalar apart oda şeklinde mi düzenlenmiş?", r: "M.25/1", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "ak_apart_oda", ad: "Apart Oda Nitelikleri (M.18/1-a, M.25)", tip: "normal",
+            maddeler: [
+              { id: "ak_oturma", t: "Yatak odasından ayrı oturma bölümü var mı? (sabit malzeme ile fonksiyonel ayrım)", r: "M.18/1-a/2", cevapTip: "evet_hayir" },
+              { id: "ak_masa", t: "Oturma bölümünde yemek masası ve sandalye var mı?", r: "M.18/1-a/2", cevapTip: "evet_hayir" },
+              { id: "ak_ocak", t: "Oturma bölümünde ocak ve davlumbaz var mı?", r: "M.18/1-a/2", cevapTip: "evet_hayir" },
+              { id: "ak_buzdolabi", t: "Oturma bölümünde buzdolabı var mı?", r: "M.18/1-a/2", cevapTip: "evet_hayir" },
+              { id: "ak_pisirme", t: "Yeterli pişirme ve servis malzemesi var mı? (tencere, tabak, bardak vb.)", r: "M.18/1-a/2", cevapTip: "evet_hayir" },
+              { id: "ak_mutfak_dolap", t: "Pişirme/servis malzemelerini saklayacak mutfak dolabı var mı?", r: "M.18/1-a/2", cevapTip: "evet_hayir" },
+              { id: "ak_standart", t: "Tefriş elemanlarında standart beraberliği sağlanmış mı? (tüm odalarda aynı kalite)", r: "M.25/2-c/1", cevapTip: "evet_hayir" },
+              { id: "ak_camasir", t: "Çamaşır yıkama-ütüleme hizmeti var mı? Yoksa otomatik çamaşır makinesi var mı?", r: "M.25/2-c/2", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "ak_yatak_odasi", ad: "Yatak Odaları (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "ak18_isik", t: "Yatak odaları doğal ışık alacak şekilde düzenlenmiş mi?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_banyo", t: "Yatak odaları banyolu mu?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_yatak", t: "Odalarda yatak, yastık, yastık kılıfı, nevresim, pike/yorgan var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_perde", t: "Odalarda tül perde ve kalın perde (veya benzeri düzenleme) var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_aydinlatma", t: "Odalarda genel aydınlatma, gece lambası ve priz var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_sehpa", t: "Odalarda yatak başucu sehpası veya benzeri düzenleme var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_dolap", t: "Odalarda elbise dolabı veya benzeri düzenleme var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_cop", t: "Odalarda çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_zemin", t: "Odalarda nitelikli zemin kaplaması var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_kilit", t: "Oda kapılarında elektronik kilit veya ilave kilit sistemi var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_dedektor", t: "Odalarda duman dedektörü var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_telefon", t: "Odalarda telefon var mı? (30 oda ve üzeri tesislerde zorunlu)", r: "M.18/1-a/1", cevapTip: "var_yok_na",
+                kosulNot: "30 oda altındaysa zorunlu değil — Uygulanmaz seçin" },
+              { id: "ak18_klima", t: "Odalarda klima var mı? (Tebliğde belirtilen illerde zorunlu)", r: "M.18/1-a/1, Tebliğ", cevapTip: "var_yok_na",
+                kosulNot: "Tebliğde belirtilen illerde zorunlu, diğerlerinde Uygulanmaz" }
+            ]
+          },
+          {
+            id: "ak_banyo", ad: "Banyo (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "ak18_b_su", t: "Banyolarda suyun yayılımını engelleyici önlemler alınmış mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_b_vitrifiye", t: "Banyolarda vitrifiye, armatür, batarya, duş donanımı var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_b_ayna", t: "Banyolarda ayna var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_b_priz", t: "Banyolarda priz var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_b_cop", t: "Banyolarda çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_b_sabun", t: "Banyolarda sabun ve şampuan var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "ak18_b_havlu", t: "Banyolarda el, banyo ve ayak havlusu (3 havlu) var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "ak_diger", ad: "Ortak Mahaller ve Diğer (M.18, M.25)", tip: "normal",
+            maddeler: [
+              { id: "ak_resepsiyon", t: "Resepsiyon ve bekleme bölümünden oluşan lobi var mı?", r: "M.25/2-a", cevapTip: "evet_hayir",
+                kosulNot: "Yazlık tesislerde bu mahallin bir kısmı açık olabilir" },
+              { id: "ak_yonetim", t: "Yönetim odası var mı?", r: "M.25/2-b", cevapTip: "evet_hayir" },
+              { id: "ak_bilgi", t: "Oda ve tesise ilişkin bilgilendirici doküman var mı?", r: "M.18", cevapTip: "evet_hayir" },
+              { id: "ak_asansor", t: "Müşteri asansörü gerekli mi ve var mı? (3 kattan fazla inilip çıkılıyorsa zorunlu)", r: "M.18/1-c", cevapTip: "var_yok_na",
+                kosulNot: "3 kat veya altındaysa Uygulanmaz seçin. Korunması gerekli taşınmazlarda zorunlu değildir." },
+              { id: "ak_asansor_alarm", t: "Asansör varsa: alarm tertibatı ve havalandırma düzeneği var mı?", r: "M.18/1-c", cevapTip: "var_yok_na",
+                kosulNot: "Asansör yoksa Uygulanmaz seçin" },
+              { id: "ak_yangin", t: "Yangın merdiveni düzenlemesi var mı?", r: "Genel", cevapTip: "var_yok_na" },
+              { id: "ak_taban", t: "Yatak odaları mevcut arazi seviyesinin altında kalmıyor mu?", r: "M.18/1-a/5", cevapTip: "evet_hayir",
+                kosulNot: "Evet olması gerekir — bodrum katta oda olamaz" },
+              { id: "ak_engelli", t: "Engelli düzenlemesi yapılmış mı? (80 oda üzeri tesislerde zorunlu)", r: "M.18/1-b", cevapTip: "var_yok_na",
+                kosulNot: "80 oda altındaysa Uygulanmaz seçin" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "a_apart",
+        ad: "Bölüm 3 — Apart Otel Özel Nitelikleri",
+        altbaslik: "Madde 25 — Apart otele özel hükümler ve istisnalar",
+        gruplar: [
+          {
+            id: "aa_istisna", ad: "Apart Otel İstisnaları — Bilgi Amaçlı", tip: "normal",
+            maddeler: [
+              { id: "aa_not1", t: "NOT: Apart otellerde erkek-kadın için ayrı genel tuvalet zorunlu değildir (M.14/2 istisnası)", r: "M.14/2", cevapTip: "metin",
+                kosulNot: "Bilgi amaçlı — zorunlu değildir, varsa not edin" },
+              { id: "aa_not2", t: "NOT: Apart otellerde personel mahalli düzenlenmesi zorunlu değildir (M.15/2 istisnası)", r: "M.15/2", cevapTip: "metin",
+                kosulNot: "Bilgi amaçlı — zorunlu değildir, varsa not edin" },
+              { id: "aa_not3", t: "NOT: Apart odaların oturma bölümleri doğal ışık almak zorunda değildir", r: "M.18/1-a/2", cevapTip: "metin",
+                kosulNot: "Bilgi amaçlı — istisna" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   { id: "termal", ad: "Termal Tesis", aciklama: "Madde 27", ikon: "♨️", hazir: false, bilgiAlanlari: [], bolumler: [] },
   { id: "saglikli_yasam", ad: "Sağlıklı Yaşam Tesisi", aciklama: "Madde 28", ikon: "🧖", hazir: false, bilgiAlanlari: [], bolumler: [] },
   { id: "spor", ad: "Spor Tesisi", aciklama: "Madde 29", ikon: "⚽", hazir: false, bilgiAlanlari: [], bolumler: [] },
@@ -1915,6 +2248,60 @@ function exportPDF(returnBlob = false) {
   });
   y = doc.lastAutoTable.finalY + 8;
   
+  // === EKSİK MADDELERİN FOTOĞRAFLARI ===
+  const eksikFotolar = [];
+  sablon.bolumler.forEach(bolum => {
+    bolum.gruplar.forEach(grup => {
+      if (grup.tip !== "alternatif") {
+        grup.maddeler.forEach(m => {
+          const cevap = d.cevaplar[m.id] || {};
+          const ev = evalCevap(m, cevap);
+          if (ev === "olumsuz" && cevap.photos && cevap.photos.length > 0) {
+            eksikFotolar.push({ madde: m.t, photos: cevap.photos, ref: m.r });
+          }
+        });
+      }
+    });
+  });
+  
+  if (eksikFotolar.length > 0) {
+    doc.addPage();
+    y = margin;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(163, 45, 45);
+    doc.text(tr("EKSIK MADDE FOTOGRAFLARI"), margin, y);
+    doc.setTextColor(0, 0, 0);
+    y += 8;
+    
+    for (const item of eksikFotolar) {
+      if (y > 240) { doc.addPage(); y = margin; }
+      
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      const titleLines = doc.splitTextToSize(tr(item.madde) + " (" + tr(item.ref) + ")", 170);
+      doc.text(titleLines, margin, y);
+      y += titleLines.length * 4.5 + 2;
+      
+      for (const photo of item.photos) {
+        if (y > 230) { doc.addPage(); y = margin; }
+        try {
+          const imgProps = doc.getImageProperties(photo);
+          let w = 60, h = (imgProps.height / imgProps.width) * w;
+          if (h > 50) { h = 50; w = (imgProps.width / imgProps.height) * h; }
+          doc.addImage(photo, "JPEG", margin, y, w, h);
+          y += h + 4;
+        } catch(e) {
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "italic");
+          doc.text("[Fotograf yuklenemedi]", margin, y);
+          y += 6;
+        }
+      }
+      y += 4;
+    }
+  }
+  
   // İmza
   if (y > 260) { doc.addPage(); y = margin; }
   y += 10;
@@ -2068,6 +2455,164 @@ async function sharePDF() {
     toast("PDF indirildi. Galeri/Dosyalar'dan paylaşabilirsiniz.");
     closeExport();
   }
+}
+
+// ==================== HTML RAPOR (TÜM FOTOĞRAFLARLA) ====================
+function exportHTMLReport() {
+  const d = currentDenetim;
+  const sablon = currentSablon;
+  const s = computeStats(d);
+  
+  let counter = 0;
+  let maddelerHtml = "";
+  
+  sablon.bolumler.forEach(bolum => {
+    maddelerHtml += `<h2 style="color:#1a3a52;border-bottom:2px solid #1a3a52;padding-bottom:6px;margin-top:28px;">${esc(bolum.ad)}</h2>`;
+    if (bolum.altbaslik) maddelerHtml += `<p style="color:#8b8680;font-size:12px;margin-top:-8px;">${esc(bolum.altbaslik)}</p>`;
+    
+    bolum.gruplar.forEach(grup => {
+      if (grup.ad) maddelerHtml += `<h3 style="color:#b8542a;margin-top:18px;">${esc(grup.ad)}</h3>`;
+      
+      if (grup.tip === "alternatif") {
+        const enAzBir = grup.maddeler.some(m => evalCevap(m, d.cevaplar[m.id]) === "olumlu");
+        const durumBadge = enAzBir 
+          ? '<span style="background:#e3ebd9;color:#3d6b3d;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;">SAĞLANDI</span>'
+          : '<span style="background:#f4dad7;color:#a32d2d;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;">SAĞLANMADI</span>';
+        maddelerHtml += `<div style="background:#fbeed6;border:1px solid #c97a1f;border-radius:8px;padding:12px;margin:8px 0;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <strong style="color:#c97a1f;">⚖️ Alternatif Grup</strong> ${durumBadge}
+          </div>`;
+        grup.maddeler.forEach(m => {
+          counter++;
+          maddelerHtml += renderMaddeHtml(m, counter, d);
+        });
+        maddelerHtml += `</div>`;
+      } else {
+        grup.maddeler.forEach(m => {
+          counter++;
+          maddelerHtml += renderMaddeHtml(m, counter, d);
+        });
+      }
+    });
+  });
+  
+  const pctColor = s.pct >= 70 ? "#3d6b3d" : "#a32d2d";
+  const pctText = (s.olumlu + s.olumsuz) === 0 ? "—" : "%" + s.pct;
+  
+  let bilgiRows = sablon.bilgiAlanlari.map(f => {
+    const val = d.bilgi[f.key] || "-";
+    const display = f.type === "date" && d.bilgi[f.key] ? fmtDate(d.bilgi[f.key]) : val;
+    return `<tr><td style="font-weight:bold;padding:4px 8px;background:#f5f3ee;width:200px;">${esc(f.label)}</td><td style="padding:4px 8px;">${esc(display)}</td></tr>`;
+  }).join("");
+  
+  const fullHtml = `<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Denetim Raporu - ${esc(d.bilgi.tesisAdi || "Tesis")}</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; color: #1a2332; background: #fff; }
+  h1 { color: #1a3a52; border-bottom: 3px solid #b8542a; padding-bottom: 8px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  td, th { border: 1px solid #d4cec2; padding: 6px 10px; text-align: left; }
+  th { background: #1a3a52; color: white; }
+  .madde-row { margin: 6px 0; padding: 10px; border: 1px solid #d4cec2; border-radius: 6px; background: #fdfcf8; }
+  .madde-row.eksik { border-left: 4px solid #a32d2d; }
+  .madde-row.uygun { border-left: 4px solid #3d6b3d; }
+  .madde-row.na { border-left: 4px solid #8b8680; }
+  .madde-row.bos { border-left: 4px solid #d4cec2; }
+  .durum { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+  .durum-ok { background: #e3ebd9; color: #3d6b3d; }
+  .durum-no { background: #f4dad7; color: #a32d2d; }
+  .durum-na { background: #e8e3d6; color: #8b8680; }
+  .durum-bos { background: #f5f3ee; color: #8b8680; }
+  .foto-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .foto-grid img { width: 180px; height: 135px; object-fit: cover; border-radius: 6px; border: 1px solid #d4cec2; cursor: pointer; }
+  .foto-grid img:hover { opacity: 0.8; }
+  .aciklama { background: #f5f3ee; padding: 6px 10px; border-radius: 4px; margin-top: 6px; font-size: 14px; color: #4a5568; }
+  .ref { color: #8b8680; font-size: 11px; }
+  .ozet-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 16px 0; }
+  .ozet-box { text-align: center; padding: 12px 8px; border-radius: 8px; }
+  .ozet-box .num { font-size: 28px; font-weight: bold; display: block; }
+  .ozet-box .lbl { font-size: 11px; text-transform: uppercase; opacity: 0.8; }
+  @media print { body { padding: 10px; } .foto-grid img { width: 140px; height: 105px; } }
+  @media (max-width: 600px) { .ozet-grid { grid-template-columns: repeat(3, 1fr); } .foto-grid img { width: 120px; height: 90px; } }
+</style>
+</head>
+<body>
+<h1>TESİS DENETİM RAPORU</h1>
+<p style="color:#4a5568;">${esc(sablon.ad)} — ${fmtDate(d.bilgi.denetimTarihi)}</p>
+
+<h2 style="color:#1a3a52;">Tesis Bilgileri</h2>
+<table>${bilgiRows}</table>
+
+<h2 style="color:#1a3a52;">Denetim Özeti</h2>
+<div class="ozet-grid">
+  <div class="ozet-box" style="background:#f5f3ee;"><span class="num">${s.toplam}</span><span class="lbl">Toplam</span></div>
+  <div class="ozet-box" style="background:#e3ebd9;color:#3d6b3d;"><span class="num">${s.olumlu}</span><span class="lbl">Uygun</span></div>
+  <div class="ozet-box" style="background:#f4dad7;color:#a32d2d;"><span class="num">${s.olumsuz}</span><span class="lbl">Eksik</span></div>
+  <div class="ozet-box" style="background:#e8e3d6;color:#8b8680;"><span class="num">${s.na}</span><span class="lbl">Uygulanmaz</span></div>
+  <div class="ozet-box" style="background:#1a3a52;color:white;"><span class="num">${pctText}</span><span class="lbl">Uygunluk</span></div>
+</div>
+
+${maddelerHtml}
+
+<div style="margin-top:40px;display:flex;justify-content:space-between;">
+  <div><strong>Kontrolör:</strong><br><br>____________________<br>${esc(d.bilgi.denetciAdi || "")}</div>
+  <div><strong>Tesis Yetkilisi:</strong><br><br>____________________</div>
+</div>
+<p style="color:#8b8680;font-size:11px;margin-top:30px;text-align:center;">${esc(d.bilgi.tesisAdi || "Denetim")} — ${esc(sablon.ad)} — ${fmtDate(d.bilgi.denetimTarihi)}</p>
+</body></html>`;
+  
+  const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8" });
+  const fname = `Denetim_${(d.bilgi.tesisAdi || "tesis").replace(/[^a-z0-9çğıöşüÇĞİÖŞÜ ]/gi, "").replace(/\s+/g, "_")}_${(d.bilgi.denetimTarihi || "").replace(/-/g,"")}_FOTOGRAFLI.html`;
+  saveAs(blob, fname);
+  closeExport();
+  toast("HTML rapor indirildi — tarayıcıda açabilirsiniz");
+}
+
+function esc(s) { return escapeHtml(s); }
+
+function renderMaddeHtml(madde, no, d) {
+  const cevap = d.cevaplar[madde.id] || {};
+  const ev = evalCevap(madde, cevap);
+  
+  let durumStr = "", durumCls = "durum-bos", rowCls = "bos";
+  if (ev === "olumlu") {
+    durumStr = cevap.deger || "UYGUN";
+    if (madde.cevapTip === "sayi" && cevap.deger) durumStr = cevap.deger + (madde.unit ? " " + madde.unit : "");
+    durumCls = "durum-ok"; rowCls = "uygun";
+  } else if (ev === "olumsuz") {
+    durumStr = "EKSİK";
+    if (madde.cevapTip === "sayi" && cevap.deger) durumStr = cevap.deger + (madde.unit ? " " + madde.unit : "") + " (YETERSİZ)";
+    durumCls = "durum-no"; rowCls = "eksik";
+  } else if (ev === "na") {
+    durumStr = "UYGULANMAZ"; durumCls = "durum-na"; rowCls = "na";
+  } else {
+    durumStr = "—";
+  }
+  
+  let html = `<div class="madde-row ${rowCls}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+      <div><strong style="color:#8b8680;font-size:12px;">${no}.</strong> ${esc(madde.t)} <span class="ref">${esc(madde.r || "")}</span></div>
+      <span class="durum ${durumCls}">${esc(durumStr)}</span>
+    </div>`;
+  
+  if (cevap.aciklama) {
+    html += `<div class="aciklama">📝 ${esc(cevap.aciklama)}</div>`;
+  }
+  
+  if (cevap.photos && cevap.photos.length > 0) {
+    html += `<div class="foto-grid">`;
+    cevap.photos.forEach((p, i) => {
+      html += `<img src="${p}" alt="Foto ${i+1}" onclick="window.open(this.src)">`;
+    });
+    html += `</div>`;
+  }
+  
+  html += `</div>`;
+  return html;
 }
 
 // ==================== INSTALL PROMPT ====================
