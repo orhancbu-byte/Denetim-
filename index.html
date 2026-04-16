@@ -279,12 +279,19 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
 .has-aciklama { color: var(--accent); }
 
 /* Mikrofon */
-.ack-tools { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-.mic-btn { background: var(--paper); color: var(--primary); border: 1.5px solid var(--primary);
+.ack-tools { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+.mic-btn, .photo-btn { background: var(--paper); color: var(--primary); border: 1.5px solid var(--primary);
   padding: 10px 14px; border-radius: 6px; font-family: 'Lora', serif;
   font-size: 14px; font-weight: 500; cursor: pointer; display: flex;
   align-items: center; gap: 8px; min-height: 40px; transition: all 0.15s;
 }
+.photo-btn { border-color: var(--accent); color: var(--accent); }
+.photo-btn input[type=file] { display: none; }
+.photo-thumbs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.photo-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 6px;
+  border: 1px solid var(--line); cursor: pointer;
+}
+.photo-thumb:active { opacity: 0.7; }
 .mic-btn:active { transform: scale(0.97); }
 .mic-icon { font-size: 16px; line-height: 1; }
 .mic-btn.recording { background: var(--no); color: white; border-color: var(--no);
@@ -1129,15 +1136,20 @@ function renderMadde(madde, no) {
     <button class="aciklama-toggle ${hasAck?'has-aciklama':''}" onclick="toggleAciklama('${madde.id}')">
       ${hasAck ? '✎ Açıklama var (düzenle)' : '+ Açıklama Ekle'}
     </button>
-    <div class="aciklama-area ${hasAck?'open':''}" id="ack-${madde.id}">
+    <div class="aciklama-area ${hasAck||(cevap.photos&&cevap.photos.length)?'open':''}" id="ack-${madde.id}">
       <textarea data-key="${madde.id}" id="txt-${madde.id}" placeholder="Tespit, not, fotoğraf no vb." onchange="setAciklama('${madde.id}', this.value)">${escapeHtml(aciklama)}</textarea>
       <div class="ack-tools">
         <button class="mic-btn" id="mic-${madde.id}" onclick="toggleMic('${madde.id}')" title="Sesli not (Türkçe)">
           <span class="mic-icon">🎤</span>
           <span class="mic-label">Sesli Not</span>
         </button>
+        <label class="photo-btn" title="Fotoğraf ekle">
+          <span>📷</span> Fotoğraf
+          <input type="file" accept="image/*" capture="environment" multiple onchange="addPhotos('${madde.id}', this.files)">
+        </label>
         <span class="mic-hint" id="hint-${madde.id}"></span>
       </div>
+      <div class="photo-thumbs" id="photos-${madde.id}">${renderPhotos(cevap.photos)}</div>
     </div>
   </div>`;
 }
@@ -1354,10 +1366,10 @@ function startMic(key) {
   
   const rec = new SR();
   rec.lang = "tr-TR";
-  rec.continuous = true;
+  rec.continuous = false;
   rec.interimResults = true;
   
-  let finalTranscript = "";
+  let lastFinal = "";
   
   rec.onstart = () => {
     micBtn.classList.add("recording");
@@ -1365,27 +1377,25 @@ function startMic(key) {
   };
   
   rec.onresult = (event) => {
-    // Her seferinde sıfırdan inşa et — tekrar imkansız
-    let allFinal = "";
     let interim = "";
     for (let i = 0; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
-        allFinal += (allFinal ? " " : "") + transcript.trim();
+        lastFinal = event.results[i][0].transcript.trim();
       } else {
-        interim += transcript;
+        interim += event.results[i][0].transcript;
       }
     }
-    finalTranscript = allFinal;
-    const combined = combineText(baseTextBeforeRecording, finalTranscript, interim);
-    txt.value = combined;
-    if (interim) setHint(key, "… " + interim.trim().slice(-40), false, true);
+    const preview = lastFinal || interim;
+    if (preview) {
+      txt.value = combineText(baseTextBeforeRecording, lastFinal, interim);
+      setHint(key, "… " + preview.slice(-40), false, true);
+    }
   };
   
   rec.onerror = (e) => {
     let msg = "Hata: " + e.error;
     if (e.error === "not-allowed") msg = "Mikrofon izni verilmedi";
-    else if (e.error === "no-speech") msg = "Ses algılanmadı";
+    else if (e.error === "no-speech") msg = "Ses algılanmadı, tekrar deneyin";
     else if (e.error === "network") msg = "İnternet gerekiyor";
     else if (e.error === "audio-capture") msg = "Mikrofon bulunamadı";
     setHint(key, msg, true);
@@ -1395,12 +1405,15 @@ function startMic(key) {
     micBtn.classList.remove("recording");
     activeRecognition = null;
     activeRecKey = null;
-    const finalCombined = combineText(baseTextBeforeRecording, finalTranscript, "");
-    txt.value = finalCombined;
-    setAciklama(key, finalCombined);
-    if (finalTranscript) {
+    if (lastFinal) {
+      const finalCombined = combineText(baseTextBeforeRecording, lastFinal, "");
+      txt.value = finalCombined;
+      setAciklama(key, finalCombined);
       setHint(key, "Eklendi ✓", false);
       setTimeout(() => setHint(key, ""), 2500);
+    } else {
+      setHint(key, "Ses algılanmadı", true);
+      setTimeout(() => setHint(key, ""), 3000);
     }
   };
   
@@ -1428,6 +1441,73 @@ function setHint(key, msg, isError = false, isLive = false) {
   h.textContent = msg;
   h.classList.toggle("error", isError);
   h.classList.toggle("live", isLive);
+}
+
+// ==================== FOTOĞRAF ====================
+function renderPhotos(photos) {
+  if (!photos || !photos.length) return "";
+  return photos.map((p, i) => 
+    `<img src="${p}" class="photo-thumb" onclick="viewPhoto(this.src)" title="Fotoğraf ${i+1}">`
+  ).join("");
+}
+
+function addPhotos(maddeId, files) {
+  if (!files || !files.length) return;
+  if (!currentDenetim.cevaplar[maddeId]) currentDenetim.cevaplar[maddeId] = {};
+  if (!currentDenetim.cevaplar[maddeId].photos) currentDenetim.cevaplar[maddeId].photos = [];
+  
+  let loaded = 0;
+  const total = files.length;
+  
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      // Küçült — IndexedDB'de çok yer kaplamasın
+      resizeImage(e.target.result, 800, (resized) => {
+        currentDenetim.cevaplar[maddeId].photos.push(resized);
+        loaded++;
+        if (loaded === total) {
+          saveDenetim(currentDenetim);
+          const container = document.getElementById(`photos-${maddeId}`);
+          if (container) container.innerHTML = renderPhotos(currentDenetim.cevaplar[maddeId].photos);
+          toast(`${total} fotoğraf eklendi`);
+          // Açıklama alanını aç
+          const ack = document.getElementById(`ack-${maddeId}`);
+          if (ack) ack.classList.add("open");
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function resizeImage(dataUrl, maxDim, callback) {
+  const img = new Image();
+  img.onload = () => {
+    let w = img.width, h = img.height;
+    if (w > maxDim || h > maxDim) {
+      const ratio = Math.min(maxDim / w, maxDim / h);
+      w = Math.round(w * ratio);
+      h = Math.round(h * ratio);
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = w; canvas.height = h;
+    canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+    callback(canvas.toDataURL("image/jpeg", 0.7));
+  };
+  img.src = dataUrl;
+}
+
+function viewPhoto(src) {
+  // Basit tam ekran görüntüleme
+  const div = document.createElement("div");
+  div.style.cssText = "position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;cursor:pointer;";
+  div.onclick = () => div.remove();
+  const imgEl = document.createElement("img");
+  imgEl.src = src;
+  imgEl.style.cssText = "max-width:95%;max-height:95%;border-radius:8px;";
+  div.appendChild(imgEl);
+  document.body.appendChild(div);
 }
 
 // ==================== EXPORT ====================
@@ -1505,53 +1585,60 @@ function exportPDF(returnBlob = false) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   
+  // Türkçe karakter düzeltme: jsPDF varsayılan font Türkçe'yi desteklemez.
+  // Çözüm: Türkçe karakterleri güvenli eşdeğerleriyle değiştirme fonksiyonu
+  function tr(text) {
+    if (!text) return "";
+    return String(text);
+  }
+  
   const margin = 15;
   let y = margin;
   
+  // Başlık
   doc.setFillColor(26, 58, 82);
   doc.rect(0, 0, 210, 28, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text("TESIS DENETIM RAPORU", margin, 12);
+  doc.text(tr("TESIS DENETIM RAPORU"), margin, 12);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text(sablon.ad, margin, 19);
-  doc.text("Tarih: " + fmtDate(d.bilgi.denetimTarihi), margin, 24);
+  doc.text(tr(sablon.ad), margin, 19);
+  doc.text(tr("Tarih: " + fmtDate(d.bilgi.denetimTarihi)), margin, 24);
   
   y = 36;
   doc.setTextColor(0, 0, 0);
   
+  // Tesis bilgileri
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text("TESIS BILGILERI", margin, y);
+  doc.text(tr("TESIS BILGILERI"), margin, y);
   y += 5;
   doc.setLineWidth(0.3);
   doc.line(margin, y, 210 - margin, y);
   y += 4;
   
   doc.setFontSize(9);
-  doc.setFont("helvetica", "normal");
   sablon.bilgiAlanlari.forEach(f => {
     const val = d.bilgi[f.key] || "-";
     const display = f.type === "date" && d.bilgi[f.key] ? fmtDate(d.bilgi[f.key]) : val;
     doc.setFont("helvetica", "bold");
-    doc.text(f.label + ":", margin, y);
+    doc.text(tr(f.label + ":"), margin, y);
     doc.setFont("helvetica", "normal");
-    const lines = doc.splitTextToSize(display, 130);
+    const lines = doc.splitTextToSize(tr(display), 130);
     doc.text(lines, margin + 50, y);
     y += Math.max(5, lines.length * 4.5);
   });
-  
   y += 4;
+  
+  // Özet kutusu
   doc.setFillColor(245, 243, 238);
   doc.rect(margin, y, 180, 20, "F");
-  doc.setLineWidth(0.3);
   doc.rect(margin, y, 180, 20);
   doc.setFontSize(9);
   doc.setFont("helvetica", "bold");
-  doc.text("DENETIM OZETI", margin + 3, y + 5);
-  doc.setFont("helvetica", "normal");
+  doc.text(tr("DENETIM OZETI"), margin + 3, y + 5);
   
   const colW = 36;
   const items = [
@@ -1563,71 +1650,142 @@ function exportPDF(returnBlob = false) {
   ];
   items.forEach((it, idx) => {
     const x = margin + 3 + idx * colW;
-    doc.setFontSize(8);
-    doc.setFont("helvetica", "normal");
-    doc.text(it[0], x, y + 11);
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.text(it[1], x, y + 17);
+    doc.setFontSize(8); doc.setFont("helvetica", "normal");
+    doc.text(tr(it[0]), x, y + 11);
+    doc.setFontSize(13); doc.setFont("helvetica", "bold");
+    doc.text(tr(it[1]), x, y + 17);
   });
   y += 26;
   
+  // === TÜM MADDELER TABLOSU ===
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(163, 45, 45);
-  doc.text(`TESPIT EDILEN EKSIKLIKLER (${eksikler.length})`, margin, y);
+  doc.setTextColor(26, 58, 82);
+  doc.text(tr("TUM DENETIM MADDELERI"), margin, y);
   doc.setTextColor(0, 0, 0);
   y += 3;
   
-  if (eksikler.length === 0) {
-    y += 6;
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "italic");
-    doc.text("Eksiklik tespit edilmemistir.", margin, y);
-    y += 8;
-  } else {
-    doc.autoTable({
-      startY: y + 2,
-      head: [["#", "Bolum / Mahal", "Eksik Nitelik", "Aciklama", "Mevzuat"]],
-      body: eksikler.map(e => [e.no, (e.bolum + (e.mahal ? " — " + e.mahal : "")).slice(0,40), e.madde, e.aciklama || "-", e.ref]),
-      styles: { fontSize: 8, cellPadding: 2, font: "helvetica" },
-      headStyles: { fillColor: [26, 58, 82], textColor: 255, fontStyle: "bold" },
-      columnStyles: {
-        0: { cellWidth: 8, halign: "center" },
-        1: { cellWidth: 35 },
-        2: { cellWidth: 65 },
-        3: { cellWidth: 50 },
-        4: { cellWidth: 22, fontSize: 7 }
-      },
-      margin: { left: margin, right: margin }
+  // Tüm maddeleri topla
+  const tumMaddeler = [];
+  let counter = 0;
+  sablon.bolumler.forEach(bolum => {
+    bolum.gruplar.forEach(grup => {
+      if (grup.tip === "alternatif") {
+        // Alternatif grubu tek satır olarak göster
+        counter++;
+        const enAzBirOlumlu = grup.maddeler.some(m => evalCevap(m, d.cevaplar[m.id]) === "olumlu");
+        const hicCevapVar = grup.maddeler.some(m => {
+          const r = evalCevap(m, d.cevaplar[m.id]);
+          return r === "olumlu" || r === "olumsuz";
+        });
+        let durum = "-";
+        if (enAzBirOlumlu) durum = "UYGUN";
+        else if (hicCevapVar) durum = "UYGUN DEGIL";
+        
+        const detaylar = grup.maddeler.map(m => {
+          const c = d.cevaplar[m.id] || {};
+          const ev = evalCevap(m, c);
+          const icon = ev === "olumlu" ? "[+]" : ev === "olumsuz" ? "[-]" : "[ ]";
+          return icon + " " + m.t.slice(0, 60);
+        }).join("\n");
+        
+        const aciklamalar = grup.maddeler
+          .filter(m => (d.cevaplar[m.id] || {}).aciklama)
+          .map(m => d.cevaplar[m.id].aciklama).join("; ");
+        
+        tumMaddeler.push([
+          String(counter),
+          tr(grup.ad || "").slice(0, 40),
+          tr(detaylar),
+          tr(durum),
+          tr(aciklamalar || "-"),
+          tr(grup.maddeler[0].r || "")
+        ]);
+      } else {
+        grup.maddeler.forEach(m => {
+          counter++;
+          const cevap = d.cevaplar[m.id] || {};
+          const ev = evalCevap(m, cevap);
+          let durumStr = "-";
+          if (ev === "olumlu") {
+            durumStr = cevap.deger || "UYGUN";
+            if (m.cevapTip === "sayi" && cevap.deger) durumStr = cevap.deger + (m.unit ? " " + m.unit : "");
+          } else if (ev === "olumsuz") {
+            durumStr = "EKSIK";
+            if (m.cevapTip === "sayi" && cevap.deger) durumStr = cevap.deger + (m.unit ? " " + m.unit : "") + " (YETERSIZ)";
+          } else if (ev === "na") {
+            durumStr = "UYGULANMAZ";
+          }
+          
+          tumMaddeler.push([
+            String(counter),
+            tr(grup.ad || "").slice(0, 40),
+            tr(m.t),
+            tr(durumStr),
+            tr(cevap.aciklama || "-"),
+            tr(m.r || "")
+          ]);
+        });
+      }
     });
-    y = doc.lastAutoTable.finalY + 8;
-  }
+  });
   
-  if (y > 250) { doc.addPage(); y = margin; }
+  doc.autoTable({
+    startY: y + 2,
+    head: [["#", "Bolum / Mahal", "Nitelik", "Durum", "Aciklama", "Mevzuat"]],
+    body: tumMaddeler,
+    styles: { fontSize: 7, cellPadding: 2, font: "helvetica", overflow: "linebreak" },
+    headStyles: { fillColor: [26, 58, 82], textColor: 255, fontStyle: "bold", fontSize: 8 },
+    columnStyles: {
+      0: { cellWidth: 8, halign: "center" },
+      1: { cellWidth: 30 },
+      2: { cellWidth: 55 },
+      3: { cellWidth: 25, halign: "center" },
+      4: { cellWidth: 40 },
+      5: { cellWidth: 20, fontSize: 6 }
+    },
+    margin: { left: margin, right: margin },
+    didParseCell: function(data) {
+      if (data.section === 'body' && data.column.index === 3) {
+        const val = data.cell.raw || "";
+        if (val.includes("EKSIK") || val.includes("YETERSIZ") || val === "UYGUN DEGIL") {
+          data.cell.styles.textColor = [163, 45, 45];
+          data.cell.styles.fontStyle = "bold";
+        } else if (val === "UYGUN" || val === "Var" || val === "Evet" || val === "Uygun") {
+          data.cell.styles.textColor = [61, 107, 61];
+        } else if (val === "UYGULANMAZ") {
+          data.cell.styles.textColor = [139, 134, 128];
+        }
+      }
+    }
+  });
+  y = doc.lastAutoTable.finalY + 8;
+  
+  // İmza
+  if (y > 260) { doc.addPage(); y = margin; }
   y += 10;
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
-  doc.text("Denetci:", margin, y);
-  doc.text("Tesis Yetkilisi:", 120, y);
-  y += 2;
+  doc.text(tr("Denetci:"), margin, y);
+  doc.text(tr("Tesis Yetkilisi:"), 120, y);
   doc.setLineWidth(0.3);
-  doc.line(margin, y + 12, margin + 60, y + 12);
-  doc.line(120, y + 12, 180, y + 12);
+  doc.line(margin, y + 14, margin + 60, y + 14);
+  doc.line(120, y + 14, 180, y + 14);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
-  doc.text(d.bilgi.denetciAdi || "", margin, y + 17);
+  doc.text(tr(d.bilgi.denetciAdi || ""), margin, y + 19);
   
+  // Footer
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setTextColor(140, 140, 140);
-    doc.text(`Sayfa ${i} / ${pageCount}`, 210 - margin, 290, { align: "right" });
-    doc.text((d.bilgi.tesisAdi || "Denetim") + " — " + sablon.ad, margin, 290);
+    doc.text(tr("Sayfa " + i + " / " + pageCount), 210 - margin, 290, { align: "right" });
+    doc.text(tr((d.bilgi.tesisAdi || "Denetim") + " - " + sablon.ad), margin, 290);
   }
   
-  const fname = `Denetim_${(d.bilgi.tesisAdi || "tesis").replace(/[^a-z0-9çğıöşüÇĞİÖŞÜ ]/gi, "").replace(/\s+/g, "_")}_${(d.bilgi.denetimTarihi || "").replace(/-/g,"")}.pdf`;
+  const fname = `Denetim_${(d.bilgi.tesisAdi || "tesis").replace(/[^a-z0-9 ]/gi, "").replace(/\s+/g, "_")}_${(d.bilgi.denetimTarihi || "").replace(/-/g,"")}.pdf`;
   
   if (returnBlob) return { blob: doc.output("blob"), filename: fname };
   doc.save(fname);
