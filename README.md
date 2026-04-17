@@ -1,1 +1,1 @@
-# Denetim-gastronomi
+# Denetim-asistanı
