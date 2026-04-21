@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1a3a52">
+<meta name="theme-color" content="#3f51b5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Denetim">
@@ -18,110 +18,122 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Lora:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
 
 :root {
-  --bg: #f5f3ee; --paper: #fdfcf8; --ink: #1a2332; --ink-soft: #4a5568; --muted: #8b8680;
-  --line: #d4cec2; --line-soft: #e8e3d6;
-  --primary: #1a3a52; --primary-soft: #2c5777; --accent: #b8542a;
-  --ok: #3d6b3d; --ok-bg: #e3ebd9; --no: #a32d2d; --no-bg: #f4dad7;
-  --warn: #c97a1f; --warn-bg: #fbeed6;
-  --shadow-sm: 0 1px 2px rgba(26,35,50,0.06);
-  --shadow-md: 0 4px 12px rgba(26,35,50,0.10);
-  --shadow-lg: 0 12px 32px rgba(26,35,50,0.16);
+  --bg: #f8f9fc; --paper: #ffffff; --ink: #1a1b22; --ink-soft: #454652; --muted: #757684;
+  --line: #c5c5d4; --line-soft: #e9e7f0;
+  --primary: #3f51b5; --primary-soft: #5c6bc0; --accent: #e8590c;
+  --ok: #2e7d32; --ok-bg: #e8f5e9; --no: #c62828; --no-bg: #ffebee;
+  --warn: #e65100; --warn-bg: #fff3e0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.10);
+  --radius: 12px;
+  --radius-lg: 16px;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
-  font-family: 'Lora', Georgia, serif; font-size: 16px; line-height: 1.5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; line-height: 1.6;
   -webkit-font-smoothing: antialiased; overscroll-behavior: none;
   min-height: 100vh; min-height: 100dvh;
 }
-.display { font-family: 'Fraunces', Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
+.display { font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em; }
 .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* === HEADER === */
-.appbar { background: var(--primary); color: var(--paper); padding: 14px 16px;
+.appbar { background: var(--primary); color: #fff; padding: 14px 16px;
   position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 12px;
   box-shadow: var(--shadow-md); padding-top: max(14px, env(safe-area-inset-top));
+  backdrop-filter: blur(12px);
 }
-.appbar h1 { font-family: 'Fraunces', serif; font-size: 18px; margin: 0;
-  font-weight: 600; flex: 1; letter-spacing: 0.01em;
+.appbar h1 { font-family: 'Inter', sans-serif; font-size: 17px; margin: 0;
+  font-weight: 600; flex: 1; letter-spacing: -0.01em;
 }
 .appbar .back-btn, .appbar .icon-btn {
-  background: transparent; border: 1px solid rgba(245,243,238,0.25);
-  color: var(--paper); padding: 8px 12px; border-radius: 6px; cursor: pointer;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; padding: 8px 14px; border-radius: 10px; cursor: pointer;
   font-family: inherit; font-size: 14px; display: flex; align-items: center; gap: 6px;
-  min-height: 38px;
+  min-height: 38px; font-weight: 500; transition: all 0.15s;
 }
-.appbar .back-btn:active, .appbar .icon-btn:active { background: rgba(245,243,238,0.15); }
+.appbar .back-btn:active, .appbar .icon-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.96); }
 
 .screen { display: none; padding-bottom: 100px; }
 .screen.active { display: block; }
 .container { max-width: 900px; margin: 0 auto; padding: 16px; }
 
-.hero { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-soft) 100%);
-  color: var(--paper); padding: 32px 20px 28px; text-align: center;
-  border-bottom: 4px solid var(--accent); position: relative; overflow: hidden;
+.hero { background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 50%, #7986cb 100%);
+  color: #fff; padding: 36px 20px 32px; text-align: center;
+  position: relative; overflow: hidden; border-radius: 0 0 24px 24px;
 }
 .hero::before { content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(circle at 20% 50%, rgba(184,84,42,0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(245,243,238,0.05) 0%, transparent 50%);
+  background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 50%);
   pointer-events: none;
 }
 .hero-inner { position: relative; z-index: 1; }
+.dark-toggle { position: absolute; top: 14px; right: 14px; z-index: 2;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; width: 42px; height: 42px; border-radius: 12px;
+  font-size: 18px; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; padding: 0; transition: all 0.2s;
+  top: max(14px, env(safe-area-inset-top));
+}
+.dark-toggle:active { background: rgba(255,255,255,0.25); transform: scale(0.92); }
 .hero .label { font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.7; margin-bottom: 8px;
+  letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px;
 }
-.hero h2 { font-family: 'Fraunces', serif; font-size: 28px; margin: 0 0 6px;
-  font-weight: 600; line-height: 1.15;
+.hero h2 { font-family: 'Inter', sans-serif; font-size: 28px; margin: 0 0 6px;
+  font-weight: 800; line-height: 1.15; letter-spacing: -0.02em;
 }
-.hero p { margin: 0; opacity: 0.85; font-size: 14px; }
+.hero p { margin: 0; opacity: 0.85; font-size: 14px; font-weight: 400; }
 
 .actions { padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; }
-.btn-primary { background: var(--primary); color: var(--paper); border: none;
-  padding: 18px 22px; font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
-  border-radius: 8px; cursor: pointer; display: flex; align-items: center;
-  justify-content: center; gap: 10px; min-height: 56px; box-shadow: var(--shadow-md);
-  transition: transform 0.1s;
+.btn-primary { background: var(--primary); color: #fff; border: none;
+  padding: 16px 22px; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600;
+  border-radius: var(--radius); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 10px; min-height: 54px; box-shadow: var(--shadow-md);
+  transition: all 0.15s; letter-spacing: -0.01em;
 }
-.btn-primary:active { transform: scale(0.98); box-shadow: var(--shadow-sm); }
+.btn-primary:active { transform: scale(0.97); box-shadow: var(--shadow-sm); }
 .btn-primary.accent { background: var(--accent); }
 
 .btn-secondary { background: var(--paper); color: var(--ink); border: 1.5px solid var(--line);
-  padding: 14px 18px; font-family: 'Lora', serif; font-size: 15px; font-weight: 500;
-  border-radius: 8px; cursor: pointer; display: flex; align-items: center;
-  justify-content: center; gap: 8px; min-height: 48px;
+  padding: 14px 18px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
+  border-radius: var(--radius); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 8px; min-height: 48px; transition: all 0.15s;
 }
-.btn-secondary:active { background: var(--line-soft); }
+.btn-secondary:active { background: var(--line-soft); transform: scale(0.97); }
 
-.section-title { font-family: 'Fraunces', serif; font-size: 13px;
-  text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted);
-  margin: 24px 16px 8px; font-weight: 600;
+.section-title { font-family: 'Inter', sans-serif; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+  margin: 24px 16px 10px; font-weight: 600;
 }
 
 .denetim-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
-.denetim-card { background: var(--paper); border: 1px solid var(--line);
-  border-left: 4px solid var(--primary); border-radius: 6px; padding: 14px 16px;
+.denetim-card { background: var(--paper); border: 1px solid var(--line-soft);
+  border-left: 4px solid var(--primary); border-radius: var(--radius); padding: 14px 16px;
   cursor: pointer; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-sm);
+  transition: all 0.15s;
 }
-.denetim-card:active { background: var(--line-soft); }
+.denetim-card:active { background: var(--line-soft); transform: scale(0.99); }
 .denetim-card.completed { border-left-color: var(--ok); }
 .denetim-card-body { flex: 1; min-width: 0; }
 .denetim-card-delete { background: transparent; border: none; color: var(--muted);
-  font-size: 20px; padding: 8px 10px; cursor: pointer; border-radius: 6px;
+  font-size: 20px; padding: 8px 10px; cursor: pointer; border-radius: var(--radius);
   line-height: 1; transition: all 0.15s;
 }
 .denetim-card-delete:active { background: var(--no-bg); color: var(--no); }
 .denetim-card-delete:hover { color: var(--no); }
-.denetim-card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px;
+.denetim-card-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px;
   margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .denetim-card-meta { font-size: 12px; color: var(--muted);
   font-family: 'JetBrains Mono', monospace;
 }
-.denetim-card-stat { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px;
-  padding: 6px 10px; border-radius: 6px; min-width: 56px; text-align: center;
+.denetim-card-stat { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 17px;
+  padding: 6px 12px; border-radius: 10px; min-width: 56px; text-align: center;
 }
 .stat-good { background: var(--ok-bg); color: var(--ok); }
 .stat-bad { background: var(--no-bg); color: var(--no); }
@@ -132,7 +144,7 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
 .empty-state p { margin: 4px 0; font-size: 14px; }
 
 .tur-list { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-.tur-card { background: var(--paper); border: 1.5px solid var(--line); border-radius: 8px;
+.tur-card { background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--radius);
   padding: 16px 18px; cursor: pointer; display: flex; align-items: center; gap: 14px;
   box-shadow: var(--shadow-sm); transition: all 0.15s;
 }
@@ -140,12 +152,12 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
 .tur-card.disabled { opacity: 0.5; cursor: not-allowed; }
 .tur-card-icon { font-size: 28px; }
 .tur-card-body { flex: 1; }
-.tur-card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; margin: 0 0 2px; }
+.tur-card-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 16px; margin: 0 0 2px; }
 .tur-card-meta { font-size: 12px; color: var(--muted); }
 .tur-card-meta.soon { color: var(--accent); }
 
 /* === FORM === */
-.form-card { background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+.form-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow-sm);
 }
 .form-row { margin-bottom: 12px; }
@@ -155,12 +167,13 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
   color: var(--muted); margin-bottom: 5px;
 }
 .form-row input, .form-row textarea, .form-row select {
-  width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 6px;
-  font-family: 'Lora', serif; font-size: 16px; background: var(--bg); color: var(--ink);
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: var(--radius);
+  font-family: 'Inter', sans-serif; font-size: 16px; background: var(--bg); color: var(--ink);
   transition: border-color 0.15s;
 }
 .form-row input:focus, .form-row textarea:focus, .form-row select:focus {
   outline: none; border-color: var(--primary); background: var(--paper);
+  box-shadow: 0 0 0 3px rgba(63,81,181,0.12);
 }
 .form-row textarea { resize: vertical; min-height: 70px; line-height: 1.45; }
 
@@ -169,10 +182,10 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
   border-bottom: 1px solid var(--line); padding: 12px 16px; display: flex; gap: 8px;
   z-index: 50; box-shadow: var(--shadow-sm);
 }
-.sum-pill { flex: 1; text-align: center; padding: 8px 6px; border-radius: 6px;
+.sum-pill { flex: 1; text-align: center; padding: 8px 6px; border-radius: var(--radius);
   font-family: 'JetBrains Mono', monospace;
 }
-.sum-pill .num { display: block; font-family: 'Fraunces', serif;
+.sum-pill .num { display: block; font-family: 'Inter', sans-serif;
   font-size: 22px; font-weight: 600; line-height: 1;
 }
 .sum-pill .lbl { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -187,8 +200,8 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
   background: var(--line-soft); height: 22px; margin: 0; overflow: hidden;
   border-bottom: 1px solid var(--line); display: flex; align-items: center;
 }
-.progress-bar { height: 100%; background: linear-gradient(90deg, var(--ok) 0%, #5a9e5a 100%);
-  transition: width 0.3s ease; min-width: 0;
+.progress-bar { height: 100%; background: linear-gradient(90deg, #43a047 0%, #66bb6a 100%);
+  transition: width 0.3s ease; min-width: 0; border-radius: 0 4px 4px 0;
 }
 .progress-text { position: absolute; width: 100%; text-align: center;
   font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
@@ -209,7 +222,7 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
 .filter-btn.active { background: var(--primary); color: var(--paper); border-color: var(--primary); }
 
 .search-input { flex: 1; min-width: 100px; padding: 6px 12px; border: 1px solid var(--line);
-  border-radius: 20px; font-family: 'Lora', serif; font-size: 14px;
+  border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 14px;
   background: var(--bg); color: var(--ink); outline: none;
 }
 .search-input:focus { border-color: var(--primary); background: var(--paper); }
@@ -220,8 +233,8 @@ body.dark mark { background: #b8860b; color: white; }
 /* AI Ön Rapor */
 .ai-rapor-btn-wrap { padding: 0; margin-bottom: 14px; }
 .btn-ai { width: 100%; background: var(--paper); color: #6b46c1;
-  border: 1.5px solid #6b46c1; padding: 18px 22px; border-radius: 8px;
-  font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
+  border: 1.5px solid #6b46c1; padding: 18px 22px; border-radius: var(--radius);
+  font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 600;
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
   min-height: 56px; box-shadow: var(--shadow-sm); transition: all 0.15s;
 }
@@ -242,18 +255,18 @@ body.dark .btn-ai:active { background: #2d1f5e; }
 .ai-rapor-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px;
   background: linear-gradient(135deg, #6b46c1 0%, #4c1d95 100%); color: white;
 }
-.ai-rapor-header h3 { margin: 0; font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
+.ai-rapor-header h3 { margin: 0; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; }
 .ai-rapor-subtitle { margin: 2px 0 0; font-size: 11px; opacity: 0.8;
   font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em;
 }
 .ai-rapor-icon { font-size: 24px; }
 .ai-rapor-close { background: rgba(255,255,255,0.2); border: none; color: white;
-  width: 30px; height: 30px; border-radius: 6px; font-size: 16px;
+  width: 30px; height: 30px; border-radius: var(--radius); font-size: 16px;
   cursor: pointer; margin-left: auto; display: flex; align-items: center; justify-content: center;
 }
 .ai-rapor-close:active { background: rgba(255,255,255,0.3); }
 .ai-rapor-content { padding: 16px; font-size: 14px; line-height: 1.6; color: var(--ink); }
-.ai-rapor-content h4 { color: #6b46c1; margin: 16px 0 6px; font-family: 'Fraunces', serif; font-size: 15px; }
+.ai-rapor-content h4 { color: #6b46c1; margin: 16px 0 6px; font-family: 'Inter', sans-serif; font-size: 15px; }
 .ai-rapor-content h4:first-child { margin-top: 0; }
 .ai-rapor-content ul { margin: 4px 0 12px; padding-left: 20px; }
 .ai-rapor-content li { margin: 4px 0; }
@@ -267,29 +280,29 @@ body.dark .btn-ai:active { background: #2d1f5e; }
 body.dark .ai-rapor-content .madde-ref-ai { background: #2d1f5e; }
 body.dark .ai-rapor-area { border-color: #7c5fcf; }
 
-.ai-error { color: var(--no); background: var(--no-bg); padding: 12px; border-radius: 6px;
+.ai-error { color: var(--no); background: var(--no-bg); padding: 12px; border-radius: var(--radius);
   font-size: 13px; text-align: center;
 }
 
 /* Karanlık mod */
 body.dark {
-  --bg: #1a1f2e; --paper: #232838; --ink: #e4e2dd; --ink-soft: #b0aaa0;
-  --muted: #7a756e; --line: #3a3f4e; --line-soft: #2d3240;
-  --primary: #4a8ab5; --primary-soft: #3a7aa5; --accent: #d4764a;
-  --ok: #5aaa5a; --ok-bg: #1e3a1e; --no: #cc5555; --no-bg: #3a1e1e;
-  --warn: #d4a04a; --warn-bg: #3a2e1a;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
+  --bg: #121318; --paper: #1e1f27; --ink: #e3e1ea; --ink-soft: #a9a8b5;
+  --muted: #6e6e7a; --line: #35363f; --line-soft: #2a2b33;
+  --primary: #8c9eff; --primary-soft: #7986cb; --accent: #ff8a65;
+  --ok: #66bb6a; --ok-bg: #1b2e1b; --no: #ef5350; --no-bg: #2e1b1b;
+  --warn: #ffa726; --warn-bg: #2e2518;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
 }
-body.dark .appbar { background: #151a28; color: #e4e2dd; }
-body.dark .appbar h1 { color: #e4e2dd; }
-body.dark .appbar .back-btn, body.dark .appbar .icon-btn { color: #e4e2dd; }
-body.dark .hero { background: linear-gradient(135deg, #1e2a3e 0%, #2a3a52 100%); }
-body.dark .hero h2, body.dark .hero p, body.dark .hero .label { color: #e4e2dd; }
+body.dark .appbar { background: #1a1b24; }
+body.dark .appbar h1 { color: #e3e1ea; }
+body.dark .appbar .back-btn, body.dark .appbar .icon-btn { color: #e3e1ea; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
+body.dark .hero { background: linear-gradient(135deg, #283593 0%, #3949ab 50%, #5c6bc0 100%); }
+body.dark .hero h2, body.dark .hero p, body.dark .hero .label { color: #e3e1ea; }
 body.dark .container p { color: var(--ink); }
-body.dark .btn-primary { background: #4a8ab5; color: #fff; }
-body.dark .btn-primary.accent { background: #d4764a; color: #fff; }
+body.dark .btn-primary { background: #5c6bc0; color: #fff; }
+body.dark .btn-primary.accent { background: #ff8a65; color: #1a1b22; }
 body.dark .btn-secondary { background: var(--paper); color: var(--ink); border-color: var(--line); }
 body.dark .section-title { color: var(--muted); }
 body.dark .denetim-card { background: var(--paper); border-color: var(--line); }
@@ -329,20 +342,20 @@ body.dark .alt-group { background: var(--warn-bg); border-color: var(--warn); }
 body.dark .genel-not-area { background: var(--paper); border-color: var(--accent); }
 body.dark .genel-not-area textarea { background: var(--bg); color: var(--ink); border-color: var(--line); }
 body.dark .toast { background: var(--ink); color: var(--bg); }
-body.dark .progress-bar { background: linear-gradient(90deg, #5aaa5a 0%, #3a8a3a 100%); }
+body.dark .progress-bar { background: linear-gradient(90deg, #66bb6a 0%, #43a047 100%); }
 body.dark .progress-bar-wrap { background: var(--line-soft); }
 body.dark img.photo-thumb { border-color: var(--line); }
 body.dark .fab { background: var(--primary); }
 body.dark .fab.accent { background: var(--accent); }
 
 .genel-not-area { margin: 16px; padding: 16px; background: var(--paper);
-  border: 1.5px solid var(--accent); border-radius: 8px; box-shadow: var(--shadow-sm);
+  border: 1.5px solid var(--accent); border-radius: var(--radius); box-shadow: var(--shadow-sm);
 }
-.genel-not-area h3 { font-family: 'Fraunces', serif; font-size: 16px;
+.genel-not-area h3 { font-family: 'Inter', sans-serif; font-size: 16px;
   color: var(--accent); margin: 0 0 8px;
 }
 .genel-not-area textarea { width: 100%; border: 1px solid var(--line);
-  border-radius: 6px; padding: 10px; font-family: 'Lora', serif;
+  border-radius: var(--radius); padding: 10px; font-family: 'Inter', sans-serif;
   font-size: 15px; resize: vertical; min-height: 80px;
   background: var(--bg); color: var(--ink);
 }
@@ -350,14 +363,14 @@ body.dark .fab.accent { background: var(--accent); }
 
 /* === BOLUM (chapter) === */
 .bolum-header { padding: 24px 16px 4px; }
-.bolum-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600;
+.bolum-title { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 600;
   color: var(--primary); margin: 0 0 4px;
 }
 .bolum-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 11px;
   color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
 }
 
-.mahal-header { font-family: 'Fraunces', serif; font-weight: 600; font-size: 13px;
+.mahal-header { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px;
   text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent);
   padding: 18px 16px 8px; display: flex; align-items: center; gap: 10px;
 }
@@ -372,7 +385,7 @@ body.dark .fab.accent { background: var(--accent); }
 }
 .alt-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .alt-group-icon { font-size: 18px; }
-.alt-group-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px;
+.alt-group-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
   color: var(--warn); flex: 1;
 }
 .alt-group-status { font-family: 'JetBrains Mono', monospace; font-size: 11px;
@@ -383,7 +396,7 @@ body.dark .fab.accent { background: var(--accent); }
 
 /* === MADDE === */
 .madde { background: var(--paper); margin: 0 16px 8px; border: 1px solid var(--line);
-  border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-sm);
+  border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm);
 }
 .alt-group .madde { margin: 6px 0; box-shadow: none; border: 1px solid var(--line); }
 
@@ -405,7 +418,7 @@ body.dark .fab.accent { background: var(--accent); }
 .btn-ans { flex: 1; min-width: 33%; padding: 14px 8px; background: transparent;
   border: none; border-right: 1px solid var(--line-soft);
   border-top: 1px solid var(--line-soft);
-  font-family: 'Fraunces', serif; font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;
   color: var(--muted); min-height: 48px; letter-spacing: 0.03em;
 }
 .btn-ans:active { background: var(--line-soft); }
@@ -419,7 +432,7 @@ body.dark .fab.accent { background: var(--accent); }
 }
 .madde-input-row { display: flex; gap: 8px; align-items: center; }
 .madde-input-row input { flex: 1; padding: 11px 12px; border: 1.5px solid var(--line);
-  border-radius: 6px; font-family: 'Lora', serif; font-size: 16px;
+  border-radius: var(--radius); font-family: 'Inter', sans-serif; font-size: 16px;
   background: var(--paper); color: var(--ink);
 }
 .madde-input-row input:focus { outline: none; border-color: var(--primary); }
@@ -443,7 +456,7 @@ body.dark .fab.accent { background: var(--accent); }
 }
 .aciklama-area.open { display: block; }
 .aciklama-area textarea { width: 100%; border: 1px solid var(--line);
-  border-radius: 6px; padding: 10px; font-family: 'Lora', serif; font-size: 15px;
+  border-radius: var(--radius); padding: 10px; font-family: 'Inter', sans-serif; font-size: 15px;
   resize: vertical; min-height: 60px; background: var(--paper); color: var(--ink);
 }
 .aciklama-area textarea:focus { outline: none; border-color: var(--primary); }
@@ -452,14 +465,14 @@ body.dark .fab.accent { background: var(--accent); }
 /* Mikrofon */
 .ack-tools { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
 .mic-btn, .photo-btn { background: var(--paper); color: var(--primary); border: 1.5px solid var(--primary);
-  padding: 10px 14px; border-radius: 6px; font-family: 'Lora', serif;
+  padding: 10px 14px; border-radius: var(--radius); font-family: 'Inter', sans-serif;
   font-size: 14px; font-weight: 500; cursor: pointer; display: flex;
   align-items: center; gap: 8px; min-height: 40px; transition: all 0.15s;
 }
 .photo-btn { border-color: var(--accent); color: var(--accent); }
 .photo-btn input[type=file] { display: none; }
 .photo-thumbs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-.photo-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 6px;
+.photo-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius);
   border: 1px solid var(--line); cursor: pointer;
 }
 .photo-thumb:active { opacity: 0.7; }
@@ -484,7 +497,7 @@ body.dark .fab.accent { background: var(--accent); }
   display: flex; gap: 10px; z-index: 90; padding-bottom: env(safe-area-inset-bottom);
 }
 .fab { flex: 1; background: var(--primary); color: var(--paper); border: none;
-  padding: 16px; border-radius: 8px; font-family: 'Fraunces', serif;
+  padding: 16px; border-radius: var(--radius); font-family: 'Inter', sans-serif;
   font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-lg);
   display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 54px;
 }
@@ -492,35 +505,36 @@ body.dark .fab.accent { background: var(--accent); }
 .fab.accent { background: var(--accent); }
 
 /* Modal */
-.modal-bg { position: fixed; inset: 0; background: rgba(26,35,50,0.55);
+.modal-bg { position: fixed; inset: 0; background: rgba(26,27,34,0.5);
   z-index: 200; display: none; align-items: flex-end; justify-content: center;
+  backdrop-filter: blur(4px);
 }
 .modal-bg.open { display: flex; }
 @media (min-width: 600px) { .modal-bg { align-items: center; padding: 20px; } }
-.modal { background: var(--paper); border-radius: 12px 12px 0 0; width: 100%;
-  max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 20px;
+.modal { background: var(--paper); border-radius: 20px 20px 0 0; width: 100%;
+  max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 24px;
   box-shadow: var(--shadow-lg);
 }
-@media (min-width: 600px) { .modal { border-radius: 12px; } }
-.modal h3 { font-family: 'Fraunces', serif; margin: 0 0 16px;
-  font-size: 20px; color: var(--primary);
+@media (min-width: 600px) { .modal { border-radius: var(--radius-lg); } }
+.modal h3 { font-family: 'Inter', sans-serif; margin: 0 0 16px;
+  font-size: 20px; color: var(--primary); font-weight: 700; letter-spacing: -0.01em;
 }
 .modal-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
 
-.install-banner { background: var(--accent); color: white; padding: 12px 16px;
+.install-banner { background: var(--primary); color: white; padding: 12px 16px;
   font-size: 13px; display: none; align-items: center; gap: 10px;
 }
 .install-banner.show { display: flex; }
 .install-banner button { margin-left: auto; background: rgba(255,255,255,0.2);
-  border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px;
-  border-radius: 4px; font-family: inherit; cursor: pointer; font-size: 13px;
+  border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px;
+  border-radius: 8px; font-family: inherit; cursor: pointer; font-size: 13px;
 }
 
 .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-  background: var(--ink); color: var(--paper); padding: 12px 20px; border-radius: 8px;
-  font-size: 14px; font-family: 'Lora', serif; z-index: 300; box-shadow: var(--shadow-lg);
+  background: var(--ink); color: var(--paper); padding: 14px 24px; border-radius: 100px;
+  font-size: 14px; font-family: 'Inter', sans-serif; z-index: 300; box-shadow: var(--shadow-lg);
   opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
-  max-width: 90%; text-align: center;
+  max-width: 90%; text-align: center; font-weight: 500;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
@@ -536,6 +550,7 @@ body.dark .fab.accent { background: var(--accent); }
 <!-- HOME -->
 <div class="screen active" id="screen-home">
   <div class="hero">
+    <button class="dark-toggle" onclick="toggleDarkMode()" id="darkModeBtn" title="Karanlık mod" aria-label="Karanlık mod">🌙</button>
     <div class="hero-inner">
       <div class="label">Kültür ve Turizm Bakanlığı</div>
       <h2>Tesis Denetimi</h2>
@@ -603,7 +618,6 @@ body.dark .fab.accent { background: var(--accent); }
     <button class="back-btn" onclick="goHome()">← Kaydet & Çık</button>
     <h1 id="denetimTitle">Denetim</h1>
     <button class="icon-btn" onclick="editInfo()" title="Düzenle">✎</button>
-    <button class="icon-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Karanlık mod">🌙</button>
     <button class="icon-btn" onclick="confirmDeleteCurrent()" title="Sil" style="border-color:rgba(255,180,180,0.4);">🗑️</button>
   </div>
   <div class="summary-bar">
@@ -645,6 +659,18 @@ body.dark .fab.accent { background: var(--accent); }
       <button class="btn-primary" style="background:var(--primary-soft);" onclick="exportWord()">📝 Word (.docx)</button>
       <button class="btn-primary accent" onclick="sharePDF()">📱 PDF + Paylaş (WhatsApp/E-posta)</button>
       <button class="btn-secondary" onclick="closeExport()">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="bosOnayModal">
+  <div class="modal">
+    <h3>⚠️ Cevaplanmamış Sorular</h3>
+    <p id="bosOnayText" style="color:var(--ink-soft); font-size:14px; margin: 0 0 16px;"></p>
+    <div class="modal-actions">
+      <button class="btn-primary accent" onclick="bosOnayEvet()">Evet, Rapor İndir</button>
+      <button class="btn-primary" onclick="bosOnayGoster()">Boş Soruları Göster</button>
+      <button class="btn-secondary" onclick="closeBosOnay()">İptal</button>
     </div>
   </div>
 </div>
@@ -692,7 +718,8 @@ const SABLONLAR = [
       { key: "denetimNedeni", label: "Denetleme Nedeni" },
       { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
       { key: "kapasite", label: "Müşteri Kapasitesi (kişi)", type: "number" },
-      { key: "denetciAdi", label: "Kontrolör Adı" }
+      { key: "denetciAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
     ],
     bolumler: [
       // === BÖLÜM 1: GENEL ASGARİ NİTELİKLER (Madde 13-17, tüm tesislere ortak) ===
@@ -734,7 +761,8 @@ const SABLONLAR = [
           {
             id: "g_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
             maddeler: [
-              { id: "g16_1", t: "Bakanlık plaketi tesis girişinde müşterinin görebileceği yerde mi?", r: "M.16/1", cevapTip: "var_yok" },
+              { id: "g16_1", t: "Bakanlık plaketi tesis girişinde müşterinin görebileceği yerde mi?", r: "M.16/1", cevapTip: "var_yok" ,
+                kosulNot: "Sadece belgeli tesisler" },
               { id: "g16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "uygun_uygundeğil" },
               { id: "g16_3", t: "Bakanlık tarafından onaylanan fiyat tarifesi uygulanıyor mu?", r: "M.16/5", cevapTip: "evet_hayir" }
             ]
@@ -825,10 +853,7 @@ const SABLONLAR = [
           {
             id: "g26_2b3", ad: "Müşteri Mahalleri (M.26/2-b/3)", tip: "normal",
             maddeler: [
-              { id: "g26_b3_wc_e", t: "Erkek müşteriler için ayrı tuvalet var mı?", r: "M.26/2-b/3", cevapTip: "var_yok" },
-              { id: "g26_b3_wc_k", t: "Kadın müşteriler için ayrı tuvalet var mı?", r: "M.26/2-b/3", cevapTip: "var_yok" },
-              { id: "g26_b3_lav_e", t: "Erkek müşteriler için ayrı lavabo var mı?", r: "M.26/2-b/3", cevapTip: "var_yok" },
-              { id: "g26_b3_lav_k", t: "Kadın müşteriler için ayrı lavabo var mı?", r: "M.26/2-b/3", cevapTip: "var_yok" }
+              { id: "g26_b3_wc", t: "Kadın ve erkek müşteriler için ayrı tuvalet ve lavabo var mı?", r: "M.26/2-b/3", cevapTip: "evet_hayir" }
             ]
           },
           
@@ -939,7 +964,8 @@ const SABLONLAR = [
       { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
       { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
       { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
-      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
     ],
     bolumler: [
       {
@@ -956,15 +982,14 @@ const SABLONLAR = [
               { id: "o5g13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
               { id: "o5g13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
               { id: "o5g13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
-              { id: "o5g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+              { id: "o5g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
                 kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
             ]
           },
           {
             id: "o5g_tuvalet", ad: "Genel Tuvaletler (M.14/2)", tip: "normal",
             maddeler: [
-              { id: "o5g_tuv_e", t: "Genel mahallere hizmet veren erkek tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" },
-              { id: "o5g_tuv_k", t: "Genel mahallere hizmet veren kadın tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" }
+              { id: "o5g_tuv", t: "Genel mahallere hizmet veren kadın ve erkek için ayrı tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" }
             ]
           },
           {
@@ -979,8 +1004,7 @@ const SABLONLAR = [
           {
             id: "o5g_personel", ad: "Personel Mahalleri (M.15) — 5 Yıldızda Zorunlu", tip: "normal",
             maddeler: [
-              { id: "o5g15_1", t: "Personel için kadın-erkek ayrı soyunma yerleri, dolapları var mı?", r: "M.15/2", cevapTip: "evet_hayir" },
-              { id: "o5g15_2", t: "Personel için kadın-erkek ayrı duş ve tuvaletler var mı?", r: "M.15/2", cevapTip: "evet_hayir" },
+              { id: "o5g15_1", t: "Personel için kadın-erkek ayrı soyunma yerleri, dolapları, duş ve tuvaletler var mı?", r: "M.15/2", cevapTip: "evet_hayir" },
               { id: "o5g15_3", t: "60 oda üzeri: Personelin ortak oturma, dinlenme ve yemek mahalli var mı?", r: "M.15/2", cevapTip: "evet_hayir",
                 kosulNot: "5 yıldızlı otellerde en az 60 oda olduğundan zorunludur" },
               { id: "o5g15_4", t: "Personel görev mahallerine uygun, özel ve temiz kıyafetli mi?", r: "M.15/4", cevapTip: "evet_hayir" },
@@ -1003,7 +1027,8 @@ const SABLONLAR = [
           {
             id: "o5g_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
             maddeler: [
-              { id: "o5g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "o5g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" ,
+                kosulNot: "Sadece belgeli tesisler" },
               { id: "o5g16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
               { id: "o5g16_3", t: "Tesis ismi belgedeki tür ve kapasiteye uygun mu? (kapasitede olmayan ünite terimi kullanılmıyor)", r: "M.16/3", cevapTip: "evet_hayir" }
             ]
@@ -1137,7 +1162,8 @@ const SABLONLAR = [
       { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
       { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
       { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
-      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
     ],
     bolumler: [
       {
@@ -1154,15 +1180,14 @@ const SABLONLAR = [
               { id: "o4g13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
               { id: "o4g13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
               { id: "o4g13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
-              { id: "o4g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+              { id: "o4g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
                 kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
             ]
           },
           {
             id: "o4g_tuvalet", ad: "Genel Tuvaletler (M.14/2)", tip: "normal",
             maddeler: [
-              { id: "o4g_tuv_e", t: "Genel mahallere hizmet veren erkek tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" },
-              { id: "o4g_tuv_k", t: "Genel mahallere hizmet veren kadın tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" }
+              { id: "o4g_tuv", t: "Genel mahallere hizmet veren kadın ve erkek için ayrı tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" }
             ]
           },
           {
@@ -1178,9 +1203,8 @@ const SABLONLAR = [
           {
             id: "o4g_personel", ad: "Personel Mahalleri (M.15) — 4 Yıldızda Zorunlu", tip: "normal",
             maddeler: [
-              { id: "o4g15_1", t: "Personel için kadın-erkek ayrı soyunma yerleri, dolapları var mı?", r: "M.15/2", cevapTip: "evet_hayir",
+              { id: "o4g15_1", t: "Personel için kadın-erkek ayrı soyunma yerleri, dolapları, duş ve tuvaletler var mı?", r: "M.15/2", cevapTip: "evet_hayir",
                 kosulNot: "4 yıldızlı otellerde oda sayısına bakılmaksızın zorunludur" },
-              { id: "o4g15_2", t: "Personel için kadın-erkek ayrı duş ve tuvaletler var mı?", r: "M.15/2", cevapTip: "evet_hayir" },
               { id: "o4g15_3", t: "60 oda üzeri: Personelin ortak oturma, dinlenme ve yemek mahalli var mı?", r: "M.15/2", cevapTip: "var_yok_na",
                 kosulNot: "60 oda altındaysa Uygulanmaz seçin" },
               { id: "o4g15_4", t: "Personel görev mahallerine uygun, özel ve temiz kıyafetli mi?", r: "M.15/4", cevapTip: "evet_hayir" },
@@ -1203,7 +1227,8 @@ const SABLONLAR = [
           {
             id: "o4g_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
             maddeler: [
-              { id: "o4g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "o4g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" ,
+                kosulNot: "Sadece belgeli tesisler" },
               { id: "o4g16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
               { id: "o4g16_3", t: "Tesis ismi belgedeki tür ve kapasiteye uygun mu? (kapasitede olmayan ünite terimi kullanılmıyor)", r: "M.16/3", cevapTip: "evet_hayir" }
             ]
@@ -1331,7 +1356,8 @@ const SABLONLAR = [
       { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
       { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
       { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
-      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
     ],
     bolumler: [
       {
@@ -1348,15 +1374,14 @@ const SABLONLAR = [
               { id: "o3g13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
               { id: "o3g13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
               { id: "o3g13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
-              { id: "o3g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+              { id: "o3g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
                 kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
             ]
           },
           {
             id: "o3g_tuvalet", ad: "Genel Tuvaletler (M.14/2) — 3 yıldızda zorunlu", tip: "normal",
             maddeler: [
-              { id: "o3g_tuv_e", t: "Genel mahallere hizmet veren erkek tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" },
-              { id: "o3g_tuv_k", t: "Genel mahallere hizmet veren kadın tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" }
+              { id: "o3g_tuv", t: "Genel mahallere hizmet veren kadın ve erkek için ayrı tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" }
             ]
           },
           {
@@ -1398,7 +1423,8 @@ const SABLONLAR = [
           {
             id: "o3g_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
             maddeler: [
-              { id: "o3g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "o3g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" ,
+                kosulNot: "Sadece belgeli tesisler" },
               { id: "o3g16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
               { id: "o3g16_3", t: "Tesis ismi belgedeki tür ve kapasiteye uygun mu? (kapasitede olmayan ünite terimi kullanılmıyor)", r: "M.16/3", cevapTip: "evet_hayir" }
             ]
@@ -1509,7 +1535,8 @@ const SABLONLAR = [
       { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
       { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
       { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
-      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
     ],
     bolumler: [
       {
@@ -1526,7 +1553,7 @@ const SABLONLAR = [
               { id: "o2g13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
               { id: "o2g13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
               { id: "o2g13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
-              { id: "o2g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+              { id: "o2g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
                 kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
             ]
           },
@@ -1570,7 +1597,8 @@ const SABLONLAR = [
           {
             id: "o2g_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
             maddeler: [
-              { id: "o2g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "o2g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" ,
+                kosulNot: "Sadece belgeli tesisler" },
               { id: "o2g16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
               { id: "o2g16_3", t: "Tesis ismi belgedeki tür ve kapasiteye uygun mu? (kapasitede olmayan ünite terimi kullanılmıyor)", r: "M.16/3", cevapTip: "evet_hayir" }
             ]
@@ -1677,7 +1705,8 @@ const SABLONLAR = [
       { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
       { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
       { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
-      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
     ],
     bolumler: [
       {
@@ -1694,7 +1723,7 @@ const SABLONLAR = [
               { id: "o1g13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
               { id: "o1g13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
               { id: "o1g13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
-              { id: "o1g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+              { id: "o1g13_7", t: "Farklı parsellerdeki üniteler arasında hizmet birliği ve fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
                 kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
             ]
           },
@@ -1738,7 +1767,8 @@ const SABLONLAR = [
           {
             id: "o1g_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
             maddeler: [
-              { id: "o1g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "o1g16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" ,
+                kosulNot: "Sadece belgeli tesisler" },
               { id: "o1g16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
               { id: "o1g16_3", t: "Tesis ismi belgedeki tür ve kapasiteye uygun mu? (kapasitede olmayan ünite terimi kullanılmıyor)", r: "M.16/3", cevapTip: "evet_hayir" }
             ]
@@ -1831,9 +1861,611 @@ const SABLONLAR = [
       }
     ]
   },
-  { id: "tatil_koyu", ad: "Tatil Köyü", aciklama: "Madde 20", ikon: "🏖️", hazir: false, bilgiAlanlari: [], bolumler: [] },
-  { id: "butik_otel", ad: "Butik Otel", aciklama: "Madde 21", ikon: "🏛️", hazir: false, bilgiAlanlari: [], bolumler: [] },
-  { id: "ozel_konaklama", ad: "Özel Konaklama Tesisi", aciklama: "Madde 22", ikon: "🏰", hazir: false, bilgiAlanlari: [], bolumler: [] },
+  { id: "tatil_koyu", ad: "Tatil Köyü", aciklama: "Madde 20 — Yaygın yerleşim düzeninde, en fazla üç katlı, en az 60 odalı konaklama + yeme-içme + spor/eğlence tesisi", ikon: "🏖️", hazir: true,
+    bilgiAlanlari: [
+      { key: "tesisAdi", label: "Tesisin Adı", required: true },
+      { key: "adres", label: "Adresi" },
+      { key: "telefon", label: "Telefon / Faks" },
+      { key: "belgeNo", label: "Belge Tarih ve No" },
+      { key: "belgeSahibi", label: "Belge Sahibi / Girişimci" },
+      { key: "denetimNedeni", label: "Denetleme Nedeni" },
+      { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
+      { key: "belgeOdaSayisi", label: "Belgedeki Oda Sayısı", type: "number" },
+      { key: "belgeYatakSayisi", label: "Belgedeki Yatak Sayısı", type: "number" },
+      { key: "sinif", label: "Sınıfı (4 veya 5 yıldız)" },
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
+    ],
+    bolumler: [
+      // === BÖLÜM 1: GENEL ASGARİ NİTELİKLER (M.13-17) ===
+      {
+        id: "tk_genel",
+        ad: "Bölüm 1 — Genel Asgari Nitelikler",
+        altbaslik: "Tüm turizm tesislerine ortak (Madde 13-17)",
+        gruplar: [
+          {
+            id: "tkg_yerlesme", ad: "Yerleşme ve Yapı (M.13)", tip: "normal",
+            maddeler: [
+              { id: "tkg13_1", t: "Mahaller kullanım amacına uygun ölçülerde mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "tkg13_2", t: "Tefriş ve donanım elemanları kaliteli ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "tkg13_3", t: "Dış cephe, iç duvar, zemin, tavan, çatı kaplamaları bakımlı ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "tkg13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir_na" },
+              { id: "tkg13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
+              { id: "tkg13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
+              { id: "tkg13_7", t: "Farklı parsellerdeki üniteler arasında hizmet ve işletme birliği ile fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
+                kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" },
+              { id: "tkg13_8", t: "Yapının TÜM cephelerinden en fazla 3 katlı olarak mı görülüyor? (bodrum kat yer alabilir)", r: "M.20/1", cevapTip: "evet_hayir" },
+              { id: "tkg13_9", t: "Yaygın yerleşim düzeninde mi? (tatil köyü tanımı)", r: "M.20/1", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "tkg_mahaller", ad: "Mahallerin Düzenlenmesi (M.14)", tip: "normal",
+            maddeler: [
+              { id: "tkg14_1", t: "Genel tuvaletler var mı? (kadın-erkek ayrı)", r: "M.14/2", cevapTip: "evet_hayir" },
+              { id: "tkg14_2", t: "Merkezi ısıtma sistemi veya klima ile ısıtma sağlanıyor mu?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "tkg14_3", t: "Tüm mekanlarda yeterli doğal veya mekanik havalandırma var mı?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "tkg14_4", t: "Devamlı sıcak ve soğuk su mevcut mu?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "tkg14_5", t: "Jeneratör mevcut mu? (kapasite 100 kişi/yatak üzerinde zorunlu)", r: "M.14/4", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "tkg_personel", ad: "Personel (M.15)", tip: "normal",
+            maddeler: [
+              { id: "tkg15_1", t: "Personel için kadın-erkek ayrı soyunma yeri, dolap, duş ve tuvalet mevcut mu?", r: "M.15/2", cevapTip: "evet_hayir" },
+              { id: "tkg15_2", t: "Personel ortak yemek-dinlenme mahalli var mı? (60 oda üstü tesislerde zorunlu)", r: "M.15/2", cevapTip: "evet_hayir_na",
+                kosulNot: "Oda sayısı ≤ 60 ise Uygulanmaz" },
+              { id: "tkg15_3", t: "Personel görev mahallerine uygun, özel ve temiz kıyafetli mi?", r: "M.15/4", cevapTip: "evet_hayir" },
+              { id: "tkg15_4", t: "İlk yardım konusunda sertifikalı personel mevcut mu?", r: "M.15/5", cevapTip: "evet_hayir" },
+              { id: "tkg15_5", t: "Lunapark/eğlence havuzlarında görevli personel var mı?", r: "M.15", cevapTip: "evet_hayir_na",
+                kosulNot: "Lunapark/eğlence havuzu yoksa Uygulanmaz" }
+            ]
+          },
+          {
+            id: "tkg_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
+            maddeler: [
+              { id: "tkg16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir",
+                kosulNot: "Sadece belgeli tesisler" },
+              { id: "tkg16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
+              { id: "tkg16_3", t: "Tesis isminde kapasitede yer almayan ünitelere ilişkin terim kullanılmıyor mu?", r: "M.16/3", cevapTip: "evet_hayir" },
+              { id: "tkg16_4", t: "Bakanlık tarafından onaylanan fiyat tarifesi uygulanıyor mu?", r: "M.16/5", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "tkg_saglik", ad: "Sağlık, Temizlik, Güvenlik, Çevre (M.17)", tip: "normal",
+            maddeler: [
+              { id: "tkg17_1", t: "Hijyen ve sağlık kurallarına uyuluyor mu?", r: "M.17/1", cevapTip: "evet_hayir" },
+              { id: "tkg17_2", t: "İlkyardım malzemeleri bulunduruluyor mu?", r: "M.17/2", cevapTip: "evet_hayir" },
+              { id: "tkg17_3", t: "Düzenli temizlik ve bakım sağlanıyor mu?", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "tkg17_4", t: "Periyodik haşere mücadelesi yapılıyor mu? (fatura/sözleşme görüldü mü?)", r: "M.17/3", cevapTip: "var_yok" },
+              { id: "tkg17_5", t: "Çöp muhafaza düzeni uygun mu?", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "tkg17_6", t: "Geri dönüşüm kutuları var mı? (kağıt, cam, metal, plastik, organik)", r: "M.17/4", cevapTip: "var_yok" },
+              { id: "tkg17_7", t: "Atık sular ilgili mevzuata uygun arıtılıyor mu?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "tkg17_8", t: "Su, enerji, kimyasal madde tüketimi asgari düzeyde tutuluyor mu?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "tkg17_9", t: "Personele çevre konusunda eğitim verilmiş mi?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "tkg17_10", t: "Müşteri ve personel güvenliği için elektronik ve fiziki önlemler alınmış mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "tkg17_11", t: "Tesisat, elektrik ve mekanik donanım standartlara uygun ve bakımlı mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "tkg17_12", t: "Teras, balkon, merdiven ve açık koridorlarda uygun korkuluk düzenlemesi var mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "tkg17_13", t: "Cam ve kaygan yüzeylerde uyarı işaretleri var mı?", r: "M.17/5", cevapTip: "var_yok" }
+            ]
+          }
+        ]
+      },
+      
+      // === BÖLÜM 2: KONAKLAMA TESİSİ ASGARİ NİTELİKLERİ (M.18) ===
+      {
+        id: "tk_konaklama",
+        ad: "Bölüm 2 — Konaklama Tesisi Asgari Nitelikleri",
+        altbaslik: "Madde 18 — Yatak odaları ve banyolar",
+        gruplar: [
+          {
+            id: "tkk_yatak", ad: "Yatak Odaları (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "tkk18_isik", t: "Yatak odaları doğal ışık alacak şekilde düzenlenmiş mi?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk18_banyo", t: "Yatak odaları banyolu mu?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk18_yatak", t: "Odalarda yatak, yastık, yastık kılıfı, nevresim, pike/yorgan var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk18_tefris", t: "Odalarda başucu sehpası, gece lambası, priz, tuvalet masası, dolap, çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk18_perde", t: "Odalarda tül perde ve kalın perde var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk18_telefon", t: "Odalarda telefon var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk18_klima", t: "Odalarda iklim koşullarına göre klima var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk18_dedektor", t: "Odalarda duman dedektörü var mı?", r: "M.18/1-a/1", cevapTip: "var_yok" },
+              { id: "tkk18_kilit", t: "Oda kapılarında elektronik kilit veya ilave kilit sistemi var mı?", r: "M.18/1-a/1", cevapTip: "var_yok" },
+              { id: "tkk18_mutfak_nis", t: "Yatak odalarında mutfak veya mutfak nişi düzenlenmemiş mi? (yasak)", r: "M.18/1-a/1", cevapTip: "evet_hayir",
+                kosulNot: "EVET = uygun (yok), HAYIR = aykırılık (mutfak/niş düzenlenmiş)" }
+            ]
+          },
+          {
+            id: "tkk_banyo", ad: "Banyo (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "tkk_b_yayilim", t: "Banyolarda suyun yayılımını engelleyici önlemler alınmış mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk_b_vitrifiye", t: "Banyolarda vitrifiye, armatür, batarya, duş donanımı tam mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk_b_ayna", t: "Banyolarda ayna, priz ve çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "tkk_b_sabun", t: "Banyolarda sabun ve şampuan bulunduruluyor mu?", r: "M.18/1-a/1", cevapTip: "var_yok" },
+              { id: "tkk_b_havlu", t: "Banyolarda el, banyo ve ayak havlusu (3 havlu) mevcut mu?", r: "M.18/1-a/1", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "tkk_diger", ad: "Diğer Konaklama Nitelikleri", tip: "normal",
+            maddeler: [
+              { id: "tkk_dok", t: "Oda ve tesise ilişkin bilgilendirici doküman var mı?", r: "M.18", cevapTip: "var_yok" },
+              { id: "tkk_apart_oran", t: "Tesiste apart odaların yatak kapasitesindeki oranı uygun mu?", r: "M.18", cevapTip: "uygun_uygundeğil_na",
+                kosulNot: "Apart oda yoksa Uygulanmaz. Tatil köyünde/pansiyon vb. %25'i, 4-5 yıldız otellerde %40'ı geçemez" },
+              { id: "tkk_engelli", t: "Engelli düzenlemesi yapılmış mı? (80 oda üstü tatil köyü için zorunlu)", r: "Tebliğ", cevapTip: "evet_hayir_na",
+                kosulNot: "Oda sayısı ≤ 80 ise Uygulanmaz" },
+              { id: "tkk_asansor", t: "Müşteri asansörü var mı? (Tatil köyünde zorunlu değildir)", r: "Tebliğ M.20", cevapTip: "var_yok_na",
+                kosulNot: "Tatil köyünde asansör zorunlu değildir — bilgi amaçlı" },
+              { id: "tkk_yangin", t: "Yangın merdiveni düzenlemesi var mı?", r: "Genel", cevapTip: "var_yok_na" },
+              { id: "tkk_havuz_asansor", t: "Havuz varsa: havuz asansörü düzenlemesi var mı?", r: "M.18/1-b", cevapTip: "var_yok_na",
+                kosulNot: "Havuz yoksa Uygulanmaz seçin" }
+            ]
+          }
+        ]
+      },
+      
+      // === BÖLÜM 3: TATİL KÖYÜ ÖZEL NİTELİKLERİ (M.20) ===
+      {
+        id: "tk_ozel",
+        ad: "Bölüm 3 — Tatil Köyü Özel Nitelikleri",
+        altbaslik: "Madde 20",
+        gruplar: [
+          {
+            id: "tko_kapasite", ad: "Kapasite ve Yerleşim (M.20)", tip: "normal",
+            maddeler: [
+              { id: "tko_oda60", t: "En az 60 oda var mı?", r: "M.20/2", cevapTip: "evet_hayir",
+                kosulNot: "Tatil köyünde en az 60 oda zorunludur" },
+              { id: "tko_kat", t: "Tüm cephelerinden en fazla 3 katlı mı görülüyor?", r: "M.20/1", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "tko_giris", ad: "Giriş ve Güvenlik (M.20/3)", tip: "normal",
+            maddeler: [
+              { id: "tko_sinir", t: "Tatil köyü sınırları emniyet altına alınmış mı?", r: "M.20/3", cevapTip: "evet_hayir" },
+              { id: "tko_kontrol", t: "Girişte kontrol ünitesi var mı?", r: "M.20/3", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "tko_otopark", ad: "Otopark (M.20/4)", tip: "normal",
+            maddeler: [
+              { id: "tko_otopark_oran", t: "Oda sayısının %10'u oranında otopark var mı?", r: "M.20/4", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "tko_hizmet", ad: "Tanıtım, Yönlendirme ve Ortak Mahaller (M.20/5-9)", tip: "normal",
+            maddeler: [
+              { id: "tko_tanitim", t: "Müşterilere tesisin bütününü tanıtıcı görsel doküman var mı? (tüm birimlere ulaşımı kolaylaştırıcı)", r: "M.20/5", cevapTip: "var_yok" },
+              { id: "tko_gurultu", t: "Yatak odaları diğer ünitelerin gürültü vb. rahatsız edici etkilerinden korunacak biçimde düzenlenmiş mi?", r: "M.20/6", cevapTip: "evet_hayir" },
+              { id: "tko_yonlendirme", t: "Yönlendirme işaretleri var mı? (karanlıkta da görülebilir nitelikte)", r: "M.20/7", cevapTip: "var_yok" },
+              { id: "tko_lobi", t: "Resepsiyon ve bekleme bölümünden oluşan lobi var mı? (yazlıkta kısmen açık olabilir)", r: "M.20/8", cevapTip: "var_yok" },
+              { id: "tko_yonetim", t: "Yönetim odaları var mı?", r: "M.20/9", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "tko_yeme", ad: "Yeme-İçme (M.20/10)", tip: "normal",
+            maddeler: [
+              { id: "tko_lokanta", t: "Tesis yatak kapasitesinin aynı anda en az %30'una hizmet veren lokanta var mı?", r: "M.20/10", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "tko_mahaller", ad: "Ortak Mahaller (M.20/11-14)", tip: "normal",
+            maddeler: [
+              { id: "tko_oturma", t: "Oturma alanı var mı?", r: "M.20/11", cevapTip: "var_yok" },
+              { id: "tko_kat_ofis", t: "Kat hizmeti için yeterli sayıda kat ofisi var mı?", r: "M.20/12", cevapTip: "var_yok" },
+              { id: "tko_blok_tel", t: "Konaklama bloklarında resepsiyonla bağlantılı en az bir telefon var mı?", r: "M.20/13", cevapTip: "var_yok" },
+              { id: "tko_bagaj", t: "Bagaj odası ve emanet + bagaj taşıma hizmeti var mı?", r: "M.20/14", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "tko_klima_int", ad: "Klima ve İnternet (M.20/15-16)", tip: "normal",
+            maddeler: [
+              { id: "tko_klima_genel", t: "Odalarda ve genel mahallerde klima var mı?", r: "M.20/15", cevapTip: "var_yok" },
+              { id: "tko_internet", t: "Odalarda ve genel mahallerde internet hizmeti var mı?", r: "M.20/16", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "tko_oda_tefris", ad: "Oda Tefrişatı (M.20/17-22)", tip: "normal",
+            maddeler: [
+              { id: "tko_sehpa", t: "Odalarda sehpa ile en az bir sandalye veya koltuk var mı?", r: "M.20/17", cevapTip: "var_yok" },
+              { id: "tko_valizlik", t: "Odalarda valizlik var mı?", r: "M.20/18", cevapTip: "var_yok" },
+              { id: "tko_tv", t: "Odalarda televizyon var mı?", r: "M.20/19", cevapTip: "var_yok" },
+              { id: "tko_sac", t: "Odalarda saç kurutma makinesi var mı?", r: "M.20/20", cevapTip: "var_yok" },
+              { id: "tko_minibar", t: "Odalarda mini bar + içecek türlerine uygun servis malzemesi var mı?", r: "M.20/21", cevapTip: "var_yok" },
+              { id: "tko_boy_ayna", t: "Odalarda boy aynası var mı?", r: "M.20/22", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "tko_buklet", ad: "Buklet Malzemeleri (M.20/23)", tip: "normal",
+            maddeler: [
+              { id: "tko_buklet", t: "Odalarda ve banyolarda en az 10 çeşit buklet malzemesi var mı?", r: "M.20/23", cevapTip: "evet_hayir",
+                kosulNot: "Bornoz, diş temizlik kiti, tıraş kiti, törpü, cımbız, tırnak makası, tek kullanımlık terlik, dikiş kiti, ayakkabı sileceği, cilası, duş bonesi, köpüğü, jeli, vücut losyonu, saç kremi, makyaj temizleme pamuğu, kulak pamuğu, hijyen poşeti, kağıt mendil, bloknot-kalem, uyku gözlüğü, şemsiye vb." }
+            ]
+          },
+          {
+            id: "tko_camasir", ad: "Çamaşır Hizmeti (M.20/24)", tip: "normal",
+            maddeler: [
+              { id: "tko_camasir", t: "Çamaşır yıkama-ütüleme hizmeti + çamaşır torbası ve fiyat tarifesi VEYA müşteri kullanımlı çamaşır makinesi var mı?", r: "M.20/24", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "tko_personel", ad: "Personel Nitelikleri (M.20/25-26)", tip: "normal",
+            maddeler: [
+              { id: "tko_personel_oran", t: "Toplam personelin en az %15'i konusunda eğitim almış veya sertifikalı mı?", r: "M.20/25", cevapTip: "evet_hayir" },
+              { id: "tko_idari", t: "İdari personel konusunda eğitimli veya en az 5 yıl deneyimli mi?", r: "M.20/26", cevapTip: "evet_hayir" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  { id: "butik_otel", ad: "Butik Otel", aciklama: "Madde 21 — 10-60 oda, özel tasarım, kişiye özel yüksek standart hizmet, 5 yıldız oda nitelikleri", ikon: "🏛️", hazir: true,
+    bilgiAlanlari: [
+      { key: "tesisAdi", label: "Tesisin Adı", required: true },
+      { key: "adres", label: "Adresi" },
+      { key: "telefon", label: "Telefon / Faks" },
+      { key: "belgeNo", label: "Belge Tarih ve No" },
+      { key: "belgeSahibi", label: "Belge Sahibi / Girişimci" },
+      { key: "denetimNedeni", label: "Denetleme Nedeni" },
+      { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
+      { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
+      { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
+    ],
+    bolumler: [
+      {
+        id: "bo_genel",
+        ad: "Bölüm 1 — Genel Asgari Nitelikler",
+        altbaslik: "Tüm turizm tesislerine ortak (Madde 13-17)",
+        gruplar: [
+          {
+            id: "bog_yerlesme", ad: "Yerleşme ve Yapı (M.13)", tip: "normal",
+            maddeler: [
+              { id: "bog13_1", t: "Mahaller kullanım amacına uygun ölçülerde mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "bog13_2", t: "Tefriş ve donanım elemanları kaliteli ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "bog13_3", t: "Dış cephe, iç duvar, zemin, tavan, çatı kaplamaları bakımlı ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "bog13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
+              { id: "bog13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
+              { id: "bog13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "bog_tuvalet", ad: "Genel Tuvaletler (M.14/2)", tip: "normal",
+            maddeler: [
+              { id: "bog_tuv", t: "Genel mahallere hizmet veren kadın ve erkek için ayrı tuvalet ve lavabo var mı?", r: "M.14/2", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "bog_mahaller", ad: "Mahallerin Düzenlenmesi (M.14)", tip: "normal",
+            maddeler: [
+              { id: "bog14_1", t: "Isıtma merkezi sistem veya klima ile sağlanıyor mu?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "bog14_2", t: "Tüm mekanlarda yeterli doğal veya mekanik havalandırma var mı?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "bog14_3", t: "Devamlı sıcak ve soğuk su mevcut mu?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "bog14_4", t: "Jeneratör mevcut mu? (kapasite 100 kişi/yatak üzerindeyse zorunlu)", r: "M.14/4", cevapTip: "var_yok_na",
+                kosulNot: "Kapasite 100 altındaysa Uygulanmaz seçin" }
+            ]
+          },
+          {
+            id: "bog_personel", ad: "Personel Mahalleri (M.15)", tip: "normal",
+            maddeler: [
+              { id: "bog15_1", t: "Personel için kadın-erkek ayrı soyunma yerleri, dolapları, duş ve tuvaletler var mı?", r: "M.15/2", cevapTip: "evet_hayir" },
+              { id: "bog15_3", t: "60 oda üzeri: Personelin ortak oturma, dinlenme ve yemek mahalli var mı?", r: "M.15/2", cevapTip: "var_yok_na",
+                kosulNot: "60 oda altındaysa (butik max 60) Uygulanmaz seçin" },
+              { id: "bog15_4", t: "Personel görev mahallerine uygun, özel ve temiz kıyafetli mi?", r: "M.15/4", cevapTip: "evet_hayir" },
+              { id: "bog15_5", t: "İlk yardım konusunda sertifikalı personel mevcut mu?", r: "M.15/5", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "bog_saglik", ad: "Sağlık, Temizlik, Güvenlik, Çevre (M.17)", tip: "normal",
+            maddeler: [
+              { id: "bog17_1", t: "Hijyen ve sağlık kurallarına uyuluyor mu?", r: "M.17/1", cevapTip: "evet_hayir" },
+              { id: "bog17_2", t: "İlkyardım malzemeleri bulunduruluyor mu?", r: "M.17/2", cevapTip: "evet_hayir" },
+              { id: "bog17_3", t: "Düzenli temizlik ve bakım sağlanıyor mu?", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "bog17_4", t: "Periyodik haşere mücadelesi yapılıyor mu?", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "bog17_5", t: "Geri dönüşüm kutuları mevcut mu?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "bog17_6", t: "Çöplerin muhafazası uygun mu?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "bog17_7", t: "Güvenlik önlemleri (elektronik ve fiziki) alınmış mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "bog17_8", t: "Tesisat, elektrik ve mekanik donanım standartlara uygun ve bakımlı mı?", r: "M.17/5", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "bog_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
+            maddeler: [
+              { id: "bog16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" ,
+                kosulNot: "Sadece belgeli tesisler" },
+              { id: "bog16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
+              { id: "bog16_3", t: "Tesis ismi belgedeki tür ve kapasiteye uygun mu?", r: "M.16/3", cevapTip: "evet_hayir" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "bo_konaklama",
+        ad: "Bölüm 2 — Konaklama Tesisi Asgari Nitelikleri",
+        altbaslik: "Madde 18 — 5 yıldız oda nitelikleri uygulanır",
+        gruplar: [
+          {
+            id: "bok_genel", ad: "Oda Sayısı (M.21)", tip: "normal",
+            maddeler: [
+              { id: "bok_oda", t: "Oda sayısı kaç?", r: "M.21/1", cevapTip: "sayi", unit: "adet",
+                kural: { tip: "sayi_min", min: 10, mesaj: "Butik otellerde en az 10 oda zorunludur (M.21/1)" } },
+              { id: "bok_oda_max", t: "Oda sayısı 60 veya altında mı? (butik otel sınırı)", r: "M.21/1", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "bok_yatak", ad: "Yatak Odaları — 5 Yıldız Nitelikleri (M.21/2-f, M.19/6)", tip: "normal",
+            maddeler: [
+              { id: "bok_isik", t: "Yatak odaları doğal ışık alacak şekilde düzenlenmiş mi?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_banyo", t: "Yatak odaları banyolu mu?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_yatak_t", t: "Odalarda yatak, yastık, yastık kılıfı, nevresim, pike/yorgan var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_perde", t: "Odalarda tül perde ve kalın perde var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_aydinlatma", t: "Odalarda genel aydınlatma, gece lambası ve priz var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_sehpa", t: "Yatak başucu sehpası var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_dolap", t: "Elbise dolabı var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_cop", t: "Odalarda çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_zemin", t: "Nitelikli zemin kaplaması var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_kilit", t: "Elektronik kilit veya ilave kilit sistemi var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_dedektor", t: "Odalarda duman dedektörü var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_telefon", t: "Odalarda telefon var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_klima", t: "Odalarda klima var mı?", r: "M.21/2-f", cevapTip: "evet_hayir" },
+              { id: "bok_minibar", t: "Odalarda mini bar ile içecek türlerine uygun servis malzemesi var mı?", r: "M.19/6-c", cevapTip: "evet_hayir" },
+              { id: "bok_oturma_grup", t: "Odalarda sehpa ile sofa/kanepe veya koltuk oturma grubu var mı?", r: "M.19/6-ç", cevapTip: "evet_hayir" },
+              { id: "bok_panel_tv", t: "Odalarda uluslararası kanal erişimi olan panel televizyon var mı?", r: "M.19/6-d", cevapTip: "evet_hayir" },
+              { id: "bok_buklet", t: "Odalarda ve banyolarda en az 15 çeşit buklet malzemesi var mı?", r: "M.21/2-f, M.19/6-e", cevapTip: "evet_hayir" },
+              { id: "bok_sicak_icecek", t: "Odalarda müşterinin sıcak içecek hazırlamasına imkân sağlayan donanım var mı?", r: "M.19/6-f", cevapTip: "evet_hayir" },
+              { id: "bok_boy_ayna", t: "Odalarda boy aynası var mı?", r: "M.19/6-g", cevapTip: "evet_hayir" },
+              { id: "bok_basucu_priz", t: "Yatak başucunda priz var mı?", r: "M.19/6-ğ", cevapTip: "evet_hayir" },
+              { id: "bok_basucu_kontrol", t: "Yatak başucunda banyo hariç oda aydınlatmasının kontrolü var mı?", r: "M.19/6-h", cevapTip: "evet_hayir" },
+              { id: "bok_banyo_tel", t: "Banyolarda resepsiyonla bağlantılı telefon veya odalarda telsiz telefon var mı?", r: "M.19/6-ı", cevapTip: "evet_hayir" },
+              { id: "bok_mutfak_yok", t: "Yatak odalarında mutfak/mutfak nişi bulunmama kuralına uyuluyor mu?", r: "M.18/1-a/1", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "bok_banyo_d", ad: "Banyo (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "bok_b_su", t: "Banyolarda suyun yayılımını engelleyici önlemler alınmış mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_b_vitrifiye", t: "Banyolarda vitrifiye, armatür, batarya, duş donanımı var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_b_ayna", t: "Banyolarda ayna var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_b_buyutec", t: "Oda banyolarında aydınlatmalı büyüteçli ayna var mı?", r: "M.21/2-ğ", cevapTip: "evet_hayir" },
+              { id: "bok_b_priz", t: "Banyolarda priz var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_b_cop", t: "Banyolarda çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_b_sabun", t: "Banyolarda sabun ve şampuan var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "bok_b_havlu", t: "Banyolarda el, banyo ve ayak havlusu (3 havlu) var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "bok_diger", ad: "Diğer Konaklama Nitelikleri (M.18)", tip: "normal",
+            maddeler: [
+              { id: "bok_asansor", t: "Müşteri asansörü gerekli mi ve var mı? (1 kattan fazla inilip çıkılıyorsa zorunlu)", r: "M.18/1-c", cevapTip: "var_yok_na",
+                kosulNot: "Butik otellerde 1 kattan fazlada zorunlu. Korunması gerekli taşınmazlarda istisna." },
+              { id: "bok_asansor_alarm", t: "Asansör varsa: alarm tertibatı ve havalandırma düzeneği var mı?", r: "M.18/1-c", cevapTip: "evet_hayir" },
+              { id: "bok_servis_asansor", t: "Müşteri asansörü zorunlu olanlarda servis asansörü var mı?", r: "M.21/2-i", cevapTip: "var_yok_na",
+                kosulNot: "Müşteri asansörü zorunlu değilse servis merdiveni yeterli" },
+              { id: "bok_yangin", t: "Yangın merdiveni düzenlemesi var mı?", r: "Genel", cevapTip: "evet_hayir" },
+              { id: "bok_taban", t: "Yatak odaları mevcut arazi seviyesi üzerinde mi?", r: "M.18/1-a/5", cevapTip: "evet_hayir" },
+              { id: "bok_engelli", t: "Engelli düzenlemesi yapılmış mı? (butik otellerde zorunlu)", r: "M.18/1-b", cevapTip: "evet_hayir" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "bo_ozel",
+        ad: "Bölüm 3 — Butik Otel Özel Nitelikleri",
+        altbaslik: "Madde 21 — Kişiye özel yüksek standartta hizmet",
+        gruplar: [
+          {
+            id: "boo_ozel", ad: "Butik Otel Özel Şartlar (M.21/2)", tip: "normal",
+            maddeler: [
+              { id: "boo_tasarim", t: "Tefriş, dekorasyon, donanım ve servis malzemeleri üstün kaliteli / özel tasarım / sanatçı üretimi / antika mı?", r: "M.21/2-a", cevapTip: "evet_hayir" },
+              { id: "boo_lokanta", t: "Alakart hizmet verilen lokanta var mı?", r: "M.21/2-b", cevapTip: "evet_hayir" },
+              { id: "boo_resepsiyon", t: "Resepsiyon, lobi var mı?", r: "M.21/2-c", cevapTip: "evet_hayir" },
+              { id: "boo_oturma", t: "Yatak kapasitesinin %25'i oranında oturma alanı var mı?", r: "M.21/2-c", cevapTip: "evet_hayir" },
+              { id: "boo_yonetim", t: "Yönetim odası var mı?", r: "M.21/2-ç", cevapTip: "evet_hayir" },
+              { id: "boo_klima_genel", t: "Genel mahallerde klima var mı?", r: "M.21/2-d", cevapTip: "evet_hayir" },
+              { id: "boo_internet", t: "Genel mahallerde ve odalarda kablosuz internet var mı?", r: "M.21/2-e", cevapTip: "evet_hayir" },
+              { id: "boo_kat_ofis", t: "Yatak katlarında kat hizmetleri ofisi veya dolabı var mı?", r: "M.21/2-g", cevapTip: "evet_hayir" },
+              { id: "boo_gece_haz", t: "Yatak odasını gece kullanımına hazırlama hizmeti (turndown) veriliyor mu?", r: "M.21/2-h", cevapTip: "evet_hayir" },
+              { id: "boo_oda_servis", t: "Oda servisi hizmeti + bilgilendirme + menü var mı?", r: "M.21/2-ı", cevapTip: "evet_hayir" },
+              { id: "boo_bagaj", t: "Bagaj odası + emanet hizmeti + bagaj taşıma hizmeti var mı?", r: "M.21/2-j", cevapTip: "evet_hayir" },
+              { id: "boo_camasir", t: "Çamaşır yıkama, ütüleme, kuru temizleme ve terzi hizmeti + çamaşır torbası + fiyat tarifesi var mı?", r: "M.21/2-k", cevapTip: "evet_hayir" },
+              { id: "boo_otopark", t: "Görevli personel aracılığıyla otopark hizmeti var mı?", r: "M.21/2-l", cevapTip: "evet_hayir" },
+              { id: "boo_personel_oran", t: "Tesis müşteri yatak kapasitesinin en az %50'sine denk deneyimli/eğitimli/sertifikalı personel var mı?", r: "M.21/2-m", cevapTip: "evet_hayir" },
+              { id: "boo_idari", t: "İdari personel eğitimli veya en az 5 yıl deneyimli mi?", r: "M.21/2-m", cevapTip: "evet_hayir" },
+              { id: "boo_unite50", t: "En az 50 kişi kapasiteli ünitelerden biri var mı? (çok amaçlı salon, toplantı salonu, alakart lokanta, bar salonu, pasta salonu, kafe vb.)", r: "M.21/2-n", cevapTip: "evet_hayir" },
+              { id: "boo_ek_unite", t: "Oturma alanı hariç, M.14/5'teki ünitelerden en az biri var mı?", r: "M.21/2-o", cevapTip: "evet_hayir",
+                kosulNot: "Havuz, spor salonu, SPA, oyun salonu, sergi salonu, çocuk oyun merkezi vb. ünitelerden en az biri" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  { id: "ozel_konaklama", ad: "Özel Konaklama Tesisi", aciklama: "Madde 22 — Mimari özgünlük, tarihi değer, doğaya ait özellik veya kültürü yansıtan yapı/tefriş özelliklerinden en az birini taşıyan nitelikli konaklama tesisi", ikon: "🏰", hazir: true,
+    bilgiAlanlari: [
+      { key: "tesisAdi", label: "Tesisin Adı", required: true },
+      { key: "adres", label: "Adresi" },
+      { key: "telefon", label: "Telefon / Faks" },
+      { key: "belgeNo", label: "Belge Tarih ve No" },
+      { key: "belgeSahibi", label: "Belge Sahibi / Girişimci" },
+      { key: "denetimNedeni", label: "Denetleme Nedeni" },
+      { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
+      { key: "belgeOdaSayisi", label: "Belgedeki Oda Sayısı", type: "number" },
+      { key: "belgeYatakSayisi", label: "Belgedeki Yatak Sayısı", type: "number" },
+      { key: "kulturVarligi", label: "Korunması Gerekli Kültür Varlığı mı? (Evet/Hayır)" },
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
+    ],
+    bolumler: [
+      // === BÖLÜM 1: GENEL ASGARİ NİTELİKLER (M.13-17) ===
+      {
+        id: "ok_genel",
+        ad: "Bölüm 1 — Genel Asgari Nitelikler",
+        altbaslik: "Tüm turizm tesislerine ortak (Madde 13-17). Kültür varlığında yer alanlarda yapının özelliğine göre değerlendirme yapılır.",
+        gruplar: [
+          {
+            id: "okg_yerlesme", ad: "Yerleşme ve Yapı (M.13)", tip: "normal",
+            maddeler: [
+              { id: "okg13_1", t: "Mahaller kullanım amacına uygun ölçülerde mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "okg13_2", t: "Tefriş ve donanım elemanları kaliteli ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "okg13_3", t: "Dış cephe, iç duvar, zemin, tavan, çatı kaplamaları bakımlı ve nitelikli mi?", r: "M.13/1", cevapTip: "evet_hayir" },
+              { id: "okg13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler görünüşü bozmuyor mu?", r: "M.13/2", cevapTip: "evet_hayir_na" },
+              { id: "okg13_5", t: "Farklı parsellerdeki üniteler arasında hizmet ve işletme birliği ile fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
+                kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" },
+              { id: "okg13_6", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir_na" },
+              { id: "okg13_7", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "okg_mahaller", ad: "Mahallerin Düzenlenmesi (M.14)", tip: "normal",
+            maddeler: [
+              { id: "okg14_1", t: "Genel mahallere hizmet verecek şekilde kadın ve erkek müşteriler için ayrı tuvalet ve lavabo düzenlenmiş mi?", r: "M.14/2", cevapTip: "evet_hayir",
+                kosulNot: "Bir-iki yıldızlı oteller, apart oteller ve pansiyonlar hariç tüm konaklamalarda zorunlu" },
+              { id: "okg14_2", t: "Isıtma merkezi sistem veya klima ile sağlanıyor mu?", r: "M.14/3", cevapTip: "evet_hayir_na",
+                kosulNot: "Kültür varlığında yapı özelliğine göre değerlendirilebilir" },
+              { id: "okg14_3", t: "Tüm mekanlarda yeterli doğal veya mekanik havalandırma var mı?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "okg14_4", t: "Devamlı sıcak ve soğuk su mevcut mu?", r: "M.14/3", cevapTip: "evet_hayir" },
+              { id: "okg14_5", t: "Jeneratör mevcut mu? (kapasite 100 kişi/yatak üzerindeyse zorunlu)", r: "M.14/4", cevapTip: "var_yok_na",
+                kosulNot: "Kapasite ≤ 100 ise 'Uygulanmaz' seçin" }
+            ]
+          },
+          {
+            id: "okg_personel", ad: "Personel (M.15)", tip: "normal",
+            maddeler: [
+              { id: "okg15_1", t: "Turizm alanında tecrübeli, eğitimli veya sertifikalı personel istihdam ediliyor mu?", r: "M.15/1", cevapTip: "evet_hayir" },
+              { id: "okg15_2", t: "Personel için soyunma yeri, dolap, duş ve tuvalet mevcut mu? (20 oda üstü tesislerde bay/bayan ayrı)", r: "M.15/2", cevapTip: "evet_hayir_na",
+                kosulNot: "20 oda altı konaklamada lavabo ve tuvalet yeterli" },
+              { id: "okg15_3", t: "60 oda üstü tesiste personel ortak oturma-dinlenme-yemek mahalli var mı?", r: "M.15/2", cevapTip: "var_yok_na",
+                kosulNot: "Oda sayısı ≤ 60 ise Uygulanmaz" },
+              { id: "okg15_4", t: "Personel görev mahallerine uygun, özel ve temiz kıyafetli mi?", r: "M.15/4", cevapTip: "evet_hayir" },
+              { id: "okg15_5", t: "İlk yardım konusunda sertifikalı personel mevcut mu?", r: "M.15/5", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "okg_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
+            maddeler: [
+              { id: "okg16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir",
+                kosulNot: "Sadece belgeli tesisler" },
+              { id: "okg16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
+              { id: "okg16_3", t: "Tesis isminde kapasitede yer almayan ünitelere ilişkin terim kullanılmıyor mu?", r: "M.16/3", cevapTip: "evet_hayir" },
+              { id: "okg16_4", t: "Bakanlık tarafından onaylanan fiyat tarifesi uygulanıyor mu?", r: "M.16/5", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "okg_saglik", ad: "Sağlık, Temizlik, Güvenlik, Çevre (M.17)", tip: "normal",
+            maddeler: [
+              { id: "okg17_1", t: "Hijyen ve sağlık kurallarına uyuluyor mu?", r: "M.17/1", cevapTip: "evet_hayir" },
+              { id: "okg17_2", t: "İlkyardım malzemeleri bulunduruluyor mu?", r: "M.17/2", cevapTip: "evet_hayir" },
+              { id: "okg17_3", t: "Düzenli temizlik ve bakım sağlanıyor mu?", r: "M.17/3", cevapTip: "evet_hayir" },
+              { id: "okg17_4", t: "Periyodik haşere mücadelesi yapılıyor mu? (fatura/sözleşme görüldü mü?)", r: "M.17/3", cevapTip: "var_yok" },
+              { id: "okg17_5", t: "Atık ayrıştırma yapılıyor mu? (kağıt, cam, metal, plastik, organik, pil, elektronik, tıbbi, yağ)", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "okg17_6", t: "Atık sular ilgili mevzuata uygun arıtılıyor mu?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "okg17_7", t: "Su, enerji, kimyasal madde tüketimi asgari düzeyde tutuluyor mu?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "okg17_8", t: "Personele çevre konusunda eğitim verilmiş mi?", r: "M.17/4", cevapTip: "evet_hayir" },
+              { id: "okg17_9", t: "Müşteri ve personel güvenliği için elektronik ve fiziki önlemler alınmış mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "okg17_10", t: "Tesisat, elektrik ve mekanik donanım standartlara uygun ve bakımlı mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "okg17_11", t: "Teras, balkon, merdiven ve açık koridorlarda uygun korkuluk düzenlemesi var mı?", r: "M.17/5", cevapTip: "evet_hayir" },
+              { id: "okg17_12", t: "Cam ve kaygan yüzeylerde uyarı işaretleri var mı?", r: "M.17/5", cevapTip: "var_yok" }
+            ]
+          }
+        ]
+      },
+      
+      // === BÖLÜM 2: KONAKLAMA TESİSİ ASGARİ NİTELİKLERİ (M.18) ===
+      {
+        id: "ok_konaklama",
+        ad: "Bölüm 2 — Konaklama Tesisi Asgari Nitelikleri",
+        altbaslik: "Madde 18 — Yatak odaları ve banyolar (Kültür varlığında yapıya göre değerlendirme yapılır)",
+        gruplar: [
+          {
+            id: "okk_yatak", ad: "Yatak Odaları (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "okk18_isik", t: "Yatak odaları doğal ışık alacak şekilde düzenlenmiş mi?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk18_banyo", t: "Yatak odaları banyolu mu?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk18_yatak", t: "Odalarda yatak, yastık, yastık kılıfı, çarşaf, pike/yorgan var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk18_tefris", t: "Odalarda başucu sehpası, gece lambası, priz, dolap, çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk18_perde", t: "Odalarda tül perde ve kalın perde (veya benzeri düzenleme) var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk18_telefon", t: "Odalarda telefon var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk18_klima", t: "Odalarda iklim koşullarına göre klima var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir_na",
+                kosulNot: "Kültür varlığında yapıya göre değerlendirilebilir" },
+              { id: "okk18_dedektor", t: "Odalarda duman dedektörü var mı?", r: "M.18/1-a/1", cevapTip: "var_yok" },
+              { id: "okk18_kilit", t: "Oda kapılarında elektronik kilit veya ilave kilit sistemi var mı?", r: "M.18/1-a/1", cevapTip: "var_yok" },
+              { id: "okk18_mutfak_nis", t: "Yatak odalarında mutfak veya mutfak nişi düzenlenmemiş mi?", r: "M.18/1-a/1", cevapTip: "evet_hayir",
+                kosulNot: "EVET = uygun (yok), HAYIR = aykırılık (mutfak/niş var)" }
+            ]
+          },
+          {
+            id: "okk_banyo", ad: "Banyo (M.18/1-a)", tip: "normal",
+            maddeler: [
+              { id: "okk_b_yayilim", t: "Banyolarda suyun yayılımını engelleyici önlemler alınmış mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk_b_vitrifiye", t: "Banyolarda vitrifiye, armatür, batarya, duş donanımı tam mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk_b_ayna", t: "Banyolarda ayna, priz, çöp kutusu var mı?", r: "M.18/1-a/1", cevapTip: "evet_hayir" },
+              { id: "okk_b_sabun", t: "Banyolarda sabun ve şampuan bulunduruluyor mu?", r: "M.18/1-a/1", cevapTip: "var_yok" },
+              { id: "okk_b_havlu", t: "Banyolarda el, banyo ve ayak havlusu bulunduruluyor mu?", r: "M.18/1-a/1", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "okk_diger", ad: "Diğer Konaklama Nitelikleri", tip: "normal",
+            maddeler: [
+              { id: "okk_kulturvarlik", t: "Kültür varlığında yer alıyorsa: yapının özelliğine göre asgari niteliklerde esneklik değerlendirmesi yapıldı mı?", r: "M.22/3", cevapTip: "evet_hayir_na",
+                kosulNot: "Kültür varlığında değilse Uygulanmaz" },
+              { id: "okk_asansor", t: "Müşteri asansörü: müşterinin ineceği/çıkacağı kat sayısı 3'ten fazla mı?", r: "M.18/1-c", cevapTip: "evet_hayir_na",
+                kosulNot: "Kat sayısı 3'ten fazlaysa müşteri asansörü zorunlu. Kültür varlığı niteliğindeki yapılar bu hükmün dışındadır" },
+              { id: "okk_asansor_var", t: "Asansör zorunluysa: mevcut mu? Alarm tertibatı + havalandırma var mı?", r: "M.18/1-c", cevapTip: "var_yok_na",
+                kosulNot: "Kat sayısı ≤3 veya kültür varlığı yapı ise Uygulanmaz" },
+              { id: "okk_erisilebilirlik", t: "Oda sayısı 80+ ise: en az 1 odada (toplam %1'i) erişilebilirlik düzenlemesi var mı?", r: "M.18/1-b", cevapTip: "var_yok_na",
+                kosulNot: "Oda sayısı ≤ 80 ise Uygulanmaz" },
+              { id: "okk_yangin", t: "Yangın merdiveni düzenlemesi var mı?", r: "Genel", cevapTip: "var_yok_na" },
+              { id: "okk_apart_oran", t: "Apart oda oranı: içinde yer aldıkları tesislerin apart dahil toplam yatak sayısının %25'ini aşmıyor mu?", r: "M.13/9", cevapTip: "evet_hayir_na",
+                kosulNot: "Apart oda yoksa Uygulanmaz" }
+            ]
+          }
+        ]
+      },
+      
+      // === BÖLÜM 3: ÖZEL KONAKLAMA ÖZEL NİTELİKLERİ (M.22) ===
+      {
+        id: "ok_ozel",
+        ad: "Bölüm 3 — Özel Konaklama Tesisi Özel Nitelikleri",
+        altbaslik: "Madde 22",
+        gruplar: [
+          {
+            id: "oko_nitelik",
+            ad: "Aşağıdaki özelliklerden EN AZ BİRİ bulunmalıdır (M.22/1)",
+            tip: "alternatif",
+            kural: "en_az_bir",
+            maddeler: [
+              { id: "oko_mimari", t: "Tesisin yer aldığı yapı mimari özgünlük taşıyor mu?", r: "M.22/1-a", cevapTip: "var_yok" },
+              { id: "oko_tarihi", t: "Tesisin yer aldığı yapı tarihi değer taşıyor mu?", r: "M.22/1-b", cevapTip: "var_yok" },
+              { id: "oko_doga", t: "Tesisin bulunduğu bölge doğaya ait özellik taşıyor mu?", r: "M.22/1-c", cevapTip: "var_yok" },
+              { id: "oko_kultur", t: "Tesisin yapı/tefriş/dekorasyonu yerel, ulusal veya başka ulusların kültürlerini yansıtıyor mu?", r: "M.22/1-ç", cevapTip: "var_yok" }
+            ]
+          },
+          {
+            id: "oko_personel", ad: "Personel Nitelikleri (M.22/2)", tip: "normal",
+            maddeler: [
+              { id: "oko_personel_oran", t: "Toplam yatak kapasitesinin en az %20'si oranında deneyimli/eğitimli/sertifikalı personel istihdam ediliyor mu?", r: "M.22/2", cevapTip: "evet_hayir" },
+              { id: "oko_nitelikli_hizmet", t: "Nitelikli hizmet sunuluyor mu?", r: "M.22/2", cevapTip: "evet_hayir" }
+            ]
+          },
+          {
+            id: "oko_kulturvarlik_degerlendirme",
+            ad: "Kültür Varlığı Değerlendirmesi (M.22/3)",
+            tip: "normal",
+            maddeler: [
+              { id: "oko_tescil", t: "Korunması gerekli taşınmaz kültür varlığı tescil belgesi mevcut mu?", r: "M.6/1-e", cevapTip: "var_yok_na",
+                kosulNot: "Kültür varlığında değilse Uygulanmaz. Turizm yatırımı belgesi almak için zorunludur" },
+              { id: "oko_yapi_ozellikleri", t: "Korunması gerekli taşınmaz kültür varlığında ise: yapının özgün özelliklerini yansıtan unsurlar korunmuş mu?", r: "M.22/3", cevapTip: "evet_hayir_na" }
+            ]
+          },
+          {
+            id: "oko_not",
+            ad: "Bilgi Notu", tip: "normal",
+            maddeler: [
+              { id: "oko_not_yatirim", t: "NOT: Özel konaklama tesislerine turizm yatırımı belgesi yalnızca korunması gerekli taşınmaz kültür varlığı olan yapılarda yer alıyorsa verilir (M.6/2)", r: "M.6/2", cevapTip: "metin",
+                kosulNot: "Bilgi amaçlı — denetimde dikkate alınması için hatırlatma" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   { id: "motel", ad: "Motel", aciklama: "Madde 23", ikon: "🛏️", hazir: false, bilgiAlanlari: [], bolumler: [] },
   { id: "pansiyon", ad: "Pansiyon", aciklama: "Madde 24 — En az 3, en fazla 25 odalı yönetimi basit konaklama tesisleri", ikon: "🏠", hazir: true,
     bilgiAlanlari: [
@@ -1846,7 +2478,8 @@ const SABLONLAR = [
       { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
       { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
       { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
-      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
     ],
     bolumler: [
       {
@@ -1863,7 +2496,7 @@ const SABLONLAR = [
               { id: "pg13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
               { id: "pg13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
               { id: "pg13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
-              { id: "pg13_7", t: "Farklı parsellerdeki üniteler arasında hizmet ve işletme birliği ile fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+              { id: "pg13_7", t: "Farklı parsellerdeki üniteler arasında hizmet ve işletme birliği ile fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
                 kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
             ]
           },
@@ -1894,7 +2527,8 @@ const SABLONLAR = [
           {
             id: "pg_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
             maddeler: [
-              { id: "pg16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "pg16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" ,
+                kosulNot: "Sadece belgeli tesisler" },
               { id: "pg16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
               { id: "pg16_3", t: "Tesis ismi belgedeki tür ve kapasiteye uygun mu? (kapasitede olmayan ünite terimi kullanılmıyor)", r: "M.16/3", cevapTip: "evet_hayir" }
             ]
@@ -1988,7 +2622,8 @@ const SABLONLAR = [
       { key: "denetimTarihi", label: "Denetleme Tarihi", type: "date", required: true },
       { key: "odaSayisi", label: "Oda Sayısı", type: "number" },
       { key: "yatakKapasitesi", label: "Yatak Kapasitesi", type: "number" },
-      { key: "kontrolorAdi", label: "Kontrolör Adı" }
+      { key: "kontrolorAdi", label: "Kontrolör Adı" },
+      { key: "uets", label: "UETS Bilgisi (Elektronik Tebligat Adresi)" }
     ],
     bolumler: [
       {
@@ -2005,7 +2640,7 @@ const SABLONLAR = [
               { id: "ag13_4", t: "Yapının tamamı belge kapsamında değilse, kapsam dışı yerler belgeli kısımdan ayrılmış mı?", r: "M.13/2", cevapTip: "evet_hayir" },
               { id: "ag13_5", t: "Bahçe varsa: özenle düzenlenmiş, aydınlatılmış ve bakımı sürekli sağlanıyor mu?", r: "M.13/6", cevapTip: "evet_hayir" },
               { id: "ag13_6", t: "Çevre aydınlatması mevcut mu?", r: "M.13/7", cevapTip: "evet_hayir" },
-              { id: "ag13_7", t: "Farklı parsellerdeki üniteler arasında hizmet ve işletme birliği ile fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir",
+              { id: "ag13_7", t: "Farklı parsellerdeki üniteler arasında hizmet ve işletme birliği ile fonksiyonel bağlantı sağlanmış mı?", r: "M.13/3", cevapTip: "evet_hayir_na",
                 kosulNot: "Farklı parselde ünite yoksa Uygulanmaz seçin" }
             ]
           },
@@ -2035,7 +2670,8 @@ const SABLONLAR = [
           {
             id: "ag_tanitim", ad: "Tanıtım ve Bilgilendirme (M.16)", tip: "normal",
             maddeler: [
-              { id: "ag16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" },
+              { id: "ag16_1", t: "Bakanlık plaketi tesis girişinde görünür yerde mi?", r: "M.16/1", cevapTip: "evet_hayir" ,
+                kosulNot: "Sadece belgeli tesisler" },
               { id: "ag16_2", t: "Tanıtım belgeye uygun mu? Yanıltıcı bilgi içermiyor mu?", r: "M.16/2", cevapTip: "evet_hayir" },
               { id: "ag16_3", t: "Tesis ismi belgedeki tür ve kapasiteye uygun mu? (kapasitede olmayan ünite terimi kullanılmıyor)", r: "M.16/3", cevapTip: "evet_hayir" }
             ]
@@ -2195,6 +2831,14 @@ const CEVAP_TIPLERI = {
       { val: "Hayır", lbl: "HAYIR", cls: "neg" }
     ],
     olumlu: ["Evet"], olumsuz: ["Hayır"], na: []
+  },
+  evet_hayir_na: {
+    butonlar: [
+      { val: "Evet", lbl: "EVET", cls: "pos" },
+      { val: "Hayır", lbl: "HAYIR", cls: "neg" },
+      { val: "NA", lbl: "UYGULANMAZ", cls: "na" }
+    ],
+    olumlu: ["Evet"], olumsuz: ["Hayır"], na: ["NA"]
   },
   sayi: {
     butonlar: null, // input
@@ -2428,7 +3072,7 @@ function confirmDeleteCurrent() {
 function openTurSecimi() {
   const list = document.getElementById("turList");
   // Sıralama: hazır olanlar önce (istenen sırada), sonra hazır olmayanlar
-  const hazirSira = ["pansiyon", "apart_otel", "gastronomi", "otel_1", "otel_2", "otel_3", "otel_4", "otel_5"];
+  const hazirSira = ["pansiyon", "apart_otel", "gastronomi", "otel_1", "otel_2", "otel_3", "otel_4", "otel_5", "butik_otel"];
   const sorted = [...SABLONLAR].sort((a, b) => {
     if (a.hazir && !b.hazir) return -1;
     if (!a.hazir && b.hazir) return 1;
@@ -2479,11 +3123,27 @@ function renderInfoForm(containerId, bilgi) {
   c.innerHTML = currentSablon.bilgiAlanlari.map(f => {
     const val = bilgi[f.key] || "";
     const type = f.type === "date" ? "date" : (f.type === "number" ? "number" : "text");
+    const extra = f.key === "uets" ? ' oninput="formatUETS(this)" inputmode="numeric" maxlength="17" placeholder="XXXXX-XXXXX-XXXXX"' : ` placeholder="${escapeHtml(f.label)}"`;
     return `<div class="form-row">
       <label>${escapeHtml(f.label)}${f.required ? ' *' : ''}</label>
-      <input type="${type}" data-key="${f.key}" value="${escapeHtml(val)}" placeholder="${escapeHtml(f.label)}">
+      <input type="${type}" data-key="${f.key}" value="${escapeHtml(val)}"${extra}>
     </div>`;
   }).join("");
+}
+
+function formatUETS(input) {
+  const cur = input.selectionStart;
+  const raw = input.value.replace(/[^0-9]/g, "").slice(0, 15);
+  let formatted = "";
+  for (let i = 0; i < raw.length; i++) {
+    if (i === 5 || i === 10) formatted += "-";
+    formatted += raw[i];
+  }
+  const prevLen = input.value.length;
+  input.value = formatted;
+  let newCur = cur + (formatted.length - prevLen);
+  if (newCur < 0) newCur = 0;
+  input.setSelectionRange(newCur, newCur);
 }
 
 function readInfoForm(containerId) {
@@ -3088,8 +3748,11 @@ function closeAiRapor() {
 
 async function getAiRapor() {
   if (!currentDenetim || !currentSablon) return;
-  const tesisAdi = currentDenetim.bilgi.tesisAdi || "";
-  const adres = currentDenetim.bilgi.adres || "";
+  
+  // Formdaki güncel değerleri oku (henüz kaydedilmemiş olabilir)
+  const formBilgi = readInfoForm("infoForm");
+  const tesisAdi = formBilgi.tesisAdi || currentDenetim.bilgi.tesisAdi || "";
+  const adres = formBilgi.adres || currentDenetim.bilgi.adres || "";
   const turAd = currentSablon.ad || "";
   
   if (!tesisAdi) {
@@ -3097,13 +3760,23 @@ async function getAiRapor() {
     return;
   }
   
+  if (!adres || adres.length < 3) {
+    toast("Doğru tesisi bulmak için adresi (en azından il/ilçe) girin");
+    return;
+  }
+  
+  // Form bilgilerini kaydet
+  currentDenetim.bilgi = { ...currentDenetim.bilgi, ...formBilgi };
+  currentDenetim.guncelleme = Date.now();
+  await saveDenetim(currentDenetim);
+  
   const btn = document.querySelector(".btn-ai");
   btn.disabled = true;
   btn.classList.add("loading");
   btn.innerHTML = "<span>🤖</span> Yorumlar analiz ediliyor... (10-20 saniye)";
   
   try {
-    const searchQuery = tesisAdi + (adres ? " " + adres : "") + " google yorumları şikayetler";
+    const searchQuery = `"${tesisAdi}" ${adres} yorumlar şikayetler`;
     
     // Madde listesini hazırla (şablondaki tüm maddelerin kısa özeti)
     let maddelerOzet = "";
@@ -3117,12 +3790,14 @@ async function getAiRapor() {
     
     const systemPrompt = `Sen bir turizm tesisi denetim uzmanısın. Türkiye Kültür ve Turizm Bakanlığı yönetmeliğine göre tesisleri denetliyorsun.
 
-Sana bir tesisin adı, türü ve denetim kontrol listesi verilecek. Ayrıca bu tesis hakkında Google yorumlarını araştırman için web search aracı verildi.
+Sana bir tesisin adı, adresi, türü ve denetim kontrol listesi verilecek. Ayrıca bu tesis hakkında Google yorumlarını araştırman için web search aracı verildi.
+
+ÖNEMLİ: Aynı isimde birden fazla tesis olabilir. Sadece verilen adresteki tesise ait yorumları dikkate al. Farklı şehir veya ilçedeki aynı isimli tesisleri karıştırma.
 
 Görevin:
-1. Tesis hakkında Google yorumlarını/şikayetlerini araştır
+1. Tesis hakkında Google yorumlarını/şikayetlerini araştır (tesis adı + adres birlikte ara)
 2. Yorumlardaki şikayetleri yönetmelik maddeleriyle eşleştir
-3. Denetçiye denetime gitmeden önce nelere dikkat etmesi gerektiğini özetle
+3. Kontrolöre denetime gitmeden önce nelere dikkat etmesi gerektiğini özetle
 
 Yanıtını şu formatta ver (HTML olarak):
 
@@ -3144,8 +3819,8 @@ Yanıtını şu formatta ver (HTML olarak):
 <li><span class="risk-low">Olumlu konu</span> — Açıklama</li>
 </ul>
 
-<h4>💡 Denetim Önerileri</h4>
-<p>Denetçiye özel öneriler</p>
+<h4>💡 Kontrol Önerileri</h4>
+<p>Kontrolöre özel öneriler</p>
 
 Eğer tesis hakkında yeterli yorum bulamazsan bunu belirt.
 Türkçe yanıt ver. Sadece HTML formatında yanıt ver, markdown kullanma.`;
@@ -3218,14 +3893,28 @@ Lütfen bu tesis hakkında Google yorumlarını araştır ve yönetmelik maddele
 function openExport() {
   const s = computeStats(currentDenetim);
   if (s.bos > 0) {
-    toast(`${s.bos} soru henüz cevaplanmadı. Tüm soruları işaretleyin.`);
-    // Boş filtresi uygula — kalan soruları göster
-    filterMaddeler("bos");
+    showBosOnay(s.bos);
     return;
   }
   document.getElementById("exportModal").classList.add("open");
 }
 function closeExport() { document.getElementById("exportModal").classList.remove("open"); }
+
+function showBosOnay(bosSayi) {
+  const modal = document.getElementById("bosOnayModal");
+  document.getElementById("bosOnayText").textContent = 
+    `${bosSayi} soru henüz cevaplanmadı. Yine de rapor indirmek istiyor musunuz?`;
+  modal.classList.add("open");
+}
+function closeBosOnay() { document.getElementById("bosOnayModal").classList.remove("open"); }
+function bosOnayEvet() {
+  closeBosOnay();
+  document.getElementById("exportModal").classList.add("open");
+}
+function bosOnayGoster() {
+  closeBosOnay();
+  filterMaddeler("bos");
+}
 
 
 // ==================== SPEECH-TO-TEXT ====================
@@ -3894,11 +4583,11 @@ function exportHTMLReport() {
   let maddelerHtml = "";
   
   sablon.bolumler.forEach(bolum => {
-    maddelerHtml += `<h2 style="color:#1a3a52;border-bottom:2px solid #1a3a52;padding-bottom:6px;margin-top:28px;">${esc(bolum.ad)}</h2>`;
+    maddelerHtml += `<h2 style="color:#3f51b5;border-bottom:2px solid #3f51b5;padding-bottom:6px;margin-top:28px;">${esc(bolum.ad)}</h2>`;
     if (bolum.altbaslik) maddelerHtml += `<p style="color:#8b8680;font-size:12px;margin-top:-8px;">${esc(bolum.altbaslik)}</p>`;
     
     bolum.gruplar.forEach(grup => {
-      if (grup.ad) maddelerHtml += `<h3 style="color:#b8542a;margin-top:18px;">${esc(grup.ad)}</h3>`;
+      if (grup.ad) maddelerHtml += `<h3 style="color:#e8590c;margin-top:18px;">${esc(grup.ad)}</h3>`;
       
       if (grup.tip === "alternatif") {
         const enAzBir = grup.maddeler.some(m => evalCevap(m, d.cevaplar[m.id]) === "olumlu");
@@ -3929,7 +4618,7 @@ function exportHTMLReport() {
   let bilgiRows = sablon.bilgiAlanlari.map(f => {
     const val = d.bilgi[f.key] || "-";
     const display = f.type === "date" && d.bilgi[f.key] ? fmtDate(d.bilgi[f.key]) : val;
-    return `<tr><td style="font-weight:bold;padding:4px 8px;background:#f5f3ee;width:200px;">${esc(f.label)}</td><td style="padding:4px 8px;">${esc(display)}</td></tr>`;
+    return `<tr><td style="font-weight:bold;padding:4px 8px;background:#f8f9fc;width:200px;">${esc(f.label)}</td><td style="padding:4px 8px;">${esc(display)}</td></tr>`;
   }).join("");
   
   const fullHtml = `<!DOCTYPE html>
@@ -3940,27 +4629,27 @@ function exportHTMLReport() {
 <title>Denetim Raporu - ${esc(d.bilgi.tesisAdi || "Tesis")}</title>
 <style>
   body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; color: #1a2332; background: #fff; }
-  h1 { color: #1a3a52; border-bottom: 3px solid #b8542a; padding-bottom: 8px; }
+  h1 { color: #3f51b5; border-bottom: 3px solid #e8590c; padding-bottom: 8px; }
   table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-  td, th { border: 1px solid #d4cec2; padding: 6px 10px; text-align: left; }
-  th { background: #1a3a52; color: white; }
-  .madde-row { margin: 6px 0; padding: 10px; border: 1px solid #d4cec2; border-radius: 6px; background: #fdfcf8; }
+  td, th { border: 1px solid #c5c5d4; padding: 6px 10px; text-align: left; }
+  th { background: #3f51b5; color: white; }
+  .madde-row { margin: 6px 0; padding: 10px; border: 1px solid #c5c5d4; border-radius: var(--radius); background: #ffffff; }
   .madde-row.eksik { border-left: 4px solid #a32d2d; }
   .madde-row.uygun { border-left: 4px solid #3d6b3d; }
   .madde-row.na { border-left: 4px solid #8b8680; }
-  .madde-row.bos { border-left: 4px solid #d4cec2; }
+  .madde-row.bos { border-left: 4px solid #c5c5d4; }
   .durum { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
   .durum-ok { background: #e3ebd9; color: #3d6b3d; }
   .durum-no { background: #f4dad7; color: #a32d2d; }
   .durum-na { background: #e8e3d6; color: #8b8680; }
-  .durum-bos { background: #f5f3ee; color: #8b8680; }
+  .durum-bos { background: #f8f9fc; color: #8b8680; }
   .foto-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .foto-grid img { width: 180px; height: 135px; object-fit: cover; border-radius: 6px; border: 1px solid #d4cec2; cursor: pointer; }
+  .foto-grid img { width: 180px; height: 135px; object-fit: cover; border-radius: var(--radius); border: 1px solid #c5c5d4; cursor: pointer; }
   .foto-grid img:hover { opacity: 0.8; }
-  .aciklama { background: #f5f3ee; padding: 6px 10px; border-radius: 4px; margin-top: 6px; font-size: 14px; color: #4a5568; }
+  .aciklama { background: #f8f9fc; padding: 6px 10px; border-radius: 4px; margin-top: 6px; font-size: 14px; color: #454652; }
   .ref { color: #8b8680; font-size: 11px; }
   .ozet-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 16px 0; }
-  .ozet-box { text-align: center; padding: 12px 8px; border-radius: 8px; }
+  .ozet-box { text-align: center; padding: 12px 8px; border-radius: var(--radius); }
   .ozet-box .num { font-size: 28px; font-weight: bold; display: block; }
   .ozet-box .lbl { font-size: 11px; text-transform: uppercase; opacity: 0.8; }
   @media print { body { padding: 10px; } .foto-grid img { width: 140px; height: 105px; } }
@@ -3969,25 +4658,25 @@ function exportHTMLReport() {
 </head>
 <body>
 <h1>TESİS DENETİM RAPORU</h1>
-<p style="color:#4a5568;">${esc(sablon.ad)} — ${fmtDate(d.bilgi.denetimTarihi)}</p>
+<p style="color:#454652;">${esc(sablon.ad)} — ${fmtDate(d.bilgi.denetimTarihi)}</p>
 
-<h2 style="color:#1a3a52;">Tesis Bilgileri</h2>
+<h2 style="color:#3f51b5;">Tesis Bilgileri</h2>
 <table>${bilgiRows}</table>
 
-<h2 style="color:#1a3a52;">Denetim Özeti</h2>
+<h2 style="color:#3f51b5;">Denetim Özeti</h2>
 <div class="ozet-grid">
-  <div class="ozet-box" style="background:#f5f3ee;"><span class="num">${s.toplam}</span><span class="lbl">Toplam</span></div>
+  <div class="ozet-box" style="background:#f8f9fc;"><span class="num">${s.toplam}</span><span class="lbl">Toplam</span></div>
   <div class="ozet-box" style="background:#e3ebd9;color:#3d6b3d;"><span class="num">${s.olumlu}</span><span class="lbl">Uygun</span></div>
   <div class="ozet-box" style="background:#f4dad7;color:#a32d2d;"><span class="num">${s.olumsuz}</span><span class="lbl">Eksik</span></div>
   <div class="ozet-box" style="background:#e8e3d6;color:#8b8680;"><span class="num">${s.na}</span><span class="lbl">Uygulanmaz</span></div>
-  <div class="ozet-box" style="background:#1a3a52;color:white;"><span class="num">${pctText}</span><span class="lbl">Uygunluk</span></div>
+  <div class="ozet-box" style="background:#3f51b5;color:white;"><span class="num">${pctText}</span><span class="lbl">Uygunluk</span></div>
 </div>
 
 ${maddelerHtml}
 
 ${d.genelNot && d.genelNot.trim() ? `
-<h2 style="color:#1a3a52;border-bottom:2px solid #b8542a;padding-bottom:6px;margin-top:28px;">Genel Değerlendirme / Kontrolör Notu</h2>
-<div style="background:#f5f3ee;padding:14px;border-radius:8px;border-left:4px solid #b8542a;font-size:15px;line-height:1.6;white-space:pre-wrap;">${esc(d.genelNot)}</div>
+<h2 style="color:#3f51b5;border-bottom:2px solid #e8590c;padding-bottom:6px;margin-top:28px;">Genel Değerlendirme / Kontrolör Notu</h2>
+<div style="background:#f8f9fc;padding:14px;border-radius:8px;border-left:4px solid #e8590c;font-size:15px;line-height:1.6;white-space:pre-wrap;">${esc(d.genelNot)}</div>
 ` : ''}
 
 <div style="margin-top:40px;display:flex;justify-content:space-between;">
